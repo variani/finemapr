@@ -1,0 +1,19 @@
+Package: finemapr
+Title: R wrapper to fine-mappers
+Version: 0.1.0
+Date: 2018-02-09
+Authors@R: c(person("Andrey", "Ziyatdinov", email = "andrey@example.com", role = c("aut", "cre")))
+Maintainer: Andrey Ziyatdinov <andrey@example.com>
+Description: R wrapper to fine-mappers.
+License: GPL (>= 3)
+URL: https://github.com/variani/finemapr
+Imports:
+    tibble,
+    dplyr,
+    magrittr
+Suggests:
+    testthat
+Collate:
+    'package.R'
+    'finemap.R'
+RoxygenNote: 6.0.1
