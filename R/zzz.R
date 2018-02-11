@@ -9,7 +9,11 @@ finemapr_guess_finemap <- function()
   op <- options()
   
   op_finemapr <- list(
-    finemapr_finemap = finemapr_guess_finemap()
+    # paths to tools
+    finemapr_finemap = finemapr_guess_finemap(),
+    # plot
+    finemapr_label_size = 4,
+    top_rank = 5
   )
   
   ind_set <- !(names(op_finemapr) %in% names(op))

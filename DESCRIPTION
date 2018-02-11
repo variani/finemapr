@@ -10,7 +10,8 @@ URL: https://github.com/variani/finemapr
 Imports:
     tibble,
     dplyr,
-    magrittr
+    magrittr,
+    cowplot
 Suggests:
     testthat
 Collate:

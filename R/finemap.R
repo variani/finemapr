@@ -82,18 +82,18 @@ run_finemap <- function(tab, ld, n,
   config <- read_delim(file.path(dir_run, "region.config"), delim = " ")
 
   # extract output tables
-  causal <- finemapr_extract_causal(log)
+  ncausal <- finemap_extract_ncausal(log)
   
   ### return
   out <- list(cmd = cmd, ret = ret_run, status = status_run, log = log,
-    tab = tab, snp = snp, config = config, causal = causal)
+    tab = tab, snp = snp, config = config, ncausal = ncausal)
   
   oldClass(out) <- c("FinemaprFinemap", oldClass(out))
    
   return(out) 
 }
 
-finemapr_extract_causal <- function(log)
+finemap_extract_ncausal <- function(log)
 {
   lines <- grep("->", log, value = TRUE)
   

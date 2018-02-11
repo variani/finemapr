@@ -4,11 +4,20 @@
 \alias{FinemaprFinemap}
 \alias{print.FinemaprFinemap}
 \alias{plot.FinemaprFinemap}
+\alias{plot_ncausal.FinemaprFinemap}
+\alias{plot_config.FinemaprFinemap}
+\alias{plot_snp.FinemaprFinemap}
 \title{S3 class FinemaprFinemap.}
 \usage{
 \method{print}{FinemaprFinemap}(x, ...)
 
 \method{plot}{FinemaprFinemap}(x, ...)
+
+\method{plot_ncausal}{FinemaprFinemap}(x, ...)
+
+\method{plot_config}{FinemaprFinemap}(x, xlim_config = c(0, 1.5), ...)
+
+\method{plot_snp}{FinemaprFinemap}(x, xlim_snp = c(0, 1.5), ...)
 }
 \description{
 S3 class FinemaprFinemap.
