@@ -1,3 +1,4 @@
+options(finemapr_finemap = "~/apps/finemap/finemap")
 
 ex <- example_finemap()
 

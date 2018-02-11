@@ -10,10 +10,14 @@
 print.FinemaprFinemap <- function(x, ...)
 {
   cat(" - command:", x$cmd, "\n")
-  
+    
   if(x$status) {
+    cat(" - see log output in `log`\n")
+    cat(" - tables of results: `config`, `snp`, `ncausal`\n")
+    
     cat(" - config:\n")
     print(x$config, n = 3)
+
   }
 }
 
