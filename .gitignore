@@ -1,3 +1,7 @@
 # running tools
 run_*/
 
+# rmd
+*\.html
+*_cache/
+

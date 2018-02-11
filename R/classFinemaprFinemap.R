@@ -12,8 +12,8 @@ print.FinemaprFinemap <- function(x, ...)
   cat(" - command:", x$cmd, "\n")
   
   if(x$status) {
-    cat(" - config (top 5):\n")
-    print(head(x$config, 5))
+    cat(" - config:\n")
+    print(x$config, n = 3)
   }
 }
 
@@ -58,16 +58,16 @@ plot_ncausal.FinemaprFinemap <- function(x,
 {
   ptab <- x$ncausal
   
-  sum_prop_zero <- filter(ptab, num == 0)[["prob"]]  %>% sum
+  sum_prop_zero <- filter(ptab, ncausal_num == 0)[["prob"]]  %>% sum
   if(sum_prop_zero == 0) {
-    ptab <- filter(ptab, num != 0)
+    ptab <- filter(ptab, ncausal_num != 0)
   }
   
   ptab <- mutate(ptab, 
-    num = factor(num, levels = sort(unique(num), decreasing = TRUE)),
+    ncausal_num = factor(ncausal_num, levels = sort(unique(ncausal_num), decreasing = TRUE)),
     type = factor(type, levels = c("prior", "post")))
     
-  p <- ggplot(ptab, aes(num, prob, fill = type)) + 
+  p <- ggplot(ptab, aes(ncausal_num, ncausal_prob, fill = type)) + 
     geom_bar(stat = "identity", position = "dodge") + 
     coord_flip() + theme(legend.position = "top") + 
     scale_fill_manual(values = c("grey50", "orange"))
@@ -95,8 +95,8 @@ plot_config.FinemaprFinemap <- function(x, xlim_config = c(0, 1.5),
     geom_point() + 
     geom_segment(aes(xend = config_prob, yend = rank, x = 0)) + 
     geom_text(aes(label = label), hjust = 0, nudge_x = 0.025, size = label_size) + 
-    xlim(xlim_config) + # ylim(c(0.5, top_rank + 0.5)) +
-    scale_y_reverse()
+    xlim(xlim_config) + 
+    scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
 }
 
 #' @rdname FinemaprFinemap
@@ -121,5 +121,5 @@ plot_snp.FinemaprFinemap <- function(x, xlim_snp = c(0, 1.5),
     geom_segment(aes(xend = snp_prob, yend = rank, x = 0)) + 
     geom_text(aes(label = label), hjust = 0, nudge_x = 0.025, size = label_size) + 
     xlim(xlim_snp) + 
-    scale_y_reverse()
+    scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
 }

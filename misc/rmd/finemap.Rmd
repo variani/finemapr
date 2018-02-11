@@ -1,0 +1,22 @@
+
+```{r options, echo = F}
+opts_chunk$set(dev = "png", dev.args = list(type = "cairo"), dpi = 192, fig.path = "figures/", comment = NA, results = 'markup', tidy = F, message = F, warning = F, echo = T)
+```
+
+```{r ex}
+# load example data from FINEMAP (http://www.christianbenner.com/)
+ex <- example_finemap()
+
+# run the tool
+# - simulated data in region 1 assumed 2 causal SNPs
+out <- run_finemap(ex$tab1, ex$ld1, ex$n1, args = "--n-causal-max 3")
+```
+
+```{r print}
+print(out)
+```
+
+```{r plot_finemap, fig.width = 6, fig.height = 8}
+plot(out, label_size = 3, grid_ncol = 1)
+```
+

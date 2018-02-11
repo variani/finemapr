@@ -102,10 +102,10 @@ finemap_extract_ncausal <- function(log)
   splits <- strsplit(lines, "\\s+")
   
   tab <- data_frame(
-    num = sapply(splits, function(x) as.integer(x[2])),
-    prob = sapply(splits, function(x) as.double(x[4])))
+    ncausal_num = sapply(splits, function(x) as.integer(x[2])),
+    ncausal_prob = sapply(splits, function(x) as.double(x[4])))
 
-  tab <- mutate(tab, type = ifelse(duplicated(num), "post", "prior")) 
+  tab <- mutate(tab, type = ifelse(duplicated(ncausal_num), "post", "prior")) 
 
   return(tab)
 }
