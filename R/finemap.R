@@ -1,6 +1,15 @@
 
+#' Run FINEMAP.
+#'
+#' @examples
+#' ex <- example_finemap()
+#' out <- run_finemap(ex$tab1, ex$ld1, ex$n1, args = "--n-causal-max 3")
+#' out <- run_finemap(ex$tab1, ex$ld1, ex$n1, args = "--n-causal-max 1")
+#'
 #' @export
-run_finemap <- function(ztab, ld, dir_run = "finemap")
+run_finemap <- function(tab, ld, n, 
+  dir_run = "run_finemap",
+  tool = getOption("finemapr_finemap"), args = "")
 {
   ### arg
   stopifnot(class(ld) == "matrix")
@@ -8,14 +17,16 @@ run_finemap <- function(ztab, ld, dir_run = "finemap")
   stopifnot(!is.null(colnames(ld)))
   
   ### var
-  ztab <- as_data_frame(ztab)
-  stopifnot(ncol(ztab) == 2)
-  names(ztab) <- c("snp", "zscore")
+  num_ind <- n # use another name for `n`
   
-  ### process input data: `ztab` and `ld`
-  ztab <- filter(ztab, !is.na(ztab)) # exclude missing Z-scores
+  ### process input data: `tab` and `ld`
+  tab <- as_data_frame(tab)
+  stopifnot(ncol(tab) >= 2)
+  names(tab) <- c("snp", "zscore")
+ 
+   tab <- filter(tab, !is.na(zscore)) # exclude missing Z-scores
   
-  snps <- ztab$snp
+  snps <- tab$snp
   stopifnot(all(snps %in% rownames(ld)))
   stopifnot(all(snps %in% colnames(ld)))
   
@@ -25,17 +36,99 @@ run_finemap <- function(ztab, ld, dir_run = "finemap")
   diag(ld) <- 1
 
   ### create `dir`
-  ret_dir_create <- dir.create(dir_run, showWarnings = FALSE)
-  stopifnot(ret_dir_create)
+  ret_dir_create <- dir.create(dir_run, showWarnings = FALSE, recursive = TRUE)
+  #stopifnot(ret_dir_create)
   
   ### write files
-  write_delim(ztab, "region.z", delim = " ", col_names = FALSE)
-  write.table(ld, "region.ld", sep = " ", row.names = FALSE, col.names = FALSE)
+  write_delim(tab, file.path(dir_run, "region.z"), 
+    delim = " ", col_names = FALSE)
+  write.table(ld, file.path(dir_run, "region.ld"), 
+    sep = " ", row.names = FALSE, col.names = FALSE)
 
   lines_master <- c("z;ld;snp;config;log;n-ind",
     "region.z;region.ld;region.snp;region.config;region.log;3300")
-  write_lines(lines_master, "region.master")
+  write_lines(lines_master, file.path(dir_run, "region.master"))
   
   ### run tool
-  #ret_run_tool <- 
+  tool_input <- paste0("--sss --log ", args, " --in-files region.master") 
+  cmd <- paste(tool, tool_input)
+  
+  dir_cur <- getwd()
+  setwd(dir_run)
+  
+  ret_run <- try({
+    system(cmd, input = tool_input)
+  })
+  
+  setwd(dir_cur)
+  
+  # executed `tool` ok?
+  status_run <- ifelse(ret_run == 0, TRUE, FALSE)
+  
+  # read log
+  if(status_run) {
+    log <- try(read_lines(file.path(dir_run, "region.log")))
+    status_run <- ifelse(class(log)[1] == "try-error", FALSE, TRUE)
+  }
+  
+  if(!status_run) {
+    out <- list(cmd = cmd, ret = ret_run, status = status_run)
+  
+    return(out) 
+  }
+  
+  # read output tables
+  snp <- read_delim(file.path(dir_run, "region.snp"), delim = " ")
+  config <- read_delim(file.path(dir_run, "region.config"), delim = " ")
+
+  # extract output tables
+  causal <- finemapr_extract_causal(log)
+  
+  ### return
+  out <- list(cmd = cmd, ret = ret_run, status = status_run, log = log,
+    tab = tab, snp = snp, config = config, causal = causal)
+  
+  oldClass(out) <- c("FinemaprFinemap", oldClass(out))
+   
+  return(out) 
+}
+
+finemapr_extract_causal <- function(log)
+{
+  lines <- grep("->", log, value = TRUE)
+  
+  lines <- gsub("\\(|\\)|>", "", lines)
+  
+  splits <- strsplit(lines, "\\s+")
+  
+  tab <- data_frame(
+    num = sapply(splits, function(x) as.integer(x[2])),
+    prob = sapply(splits, function(x) as.double(x[4])))
+
+  tab <- mutate(tab, type = ifelse(duplicated(num), "post", "prior")) 
+
+  return(tab)
+}
+
+#' @export
+example_finemap <- function(dir_example = "~/apps/finemap/example/")
+{
+  ### read
+  master <- read_delim(file.path(dir_example, "data"), 
+    delim = ";", col_names = TRUE)
+
+  tab1 <- read_delim(file.path(dir_example, "region1.z"), 
+    delim = " ", col_names = FALSE) 
+  names(tab1) <- c("snp", "zscore")  
+  
+  ld1 <- read_delim(file.path(dir_example, "region1.ld"), 
+    delim = " ", col_names = FALSE) 
+  ld1 <- as.matrix(ld1)
+  rownames(ld1) <- tab1$snp
+  colnames(ld1) <- tab1$snp
+  
+  n1 <- master[["n-ind"]][1]
+  
+  ### return
+  list(tab1 = tab1, ld1 = ld1, n1 = n1)
 }
