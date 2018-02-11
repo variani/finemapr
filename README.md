@@ -46,5 +46,5 @@ print(out)
 plot(out, label_size = 3, grid_ncol = 1)
 ```
 
-![](figures/plot_finemap-1.png)
+![](misc/rmd/figures/plot_finemap-1.png)
 
