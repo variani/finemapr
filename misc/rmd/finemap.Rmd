@@ -1,3 +1,8 @@
+---
+output:
+  html_document:
+    keep_md: true
+---
 
 ```{r options, echo = F}
 opts_chunk$set(dev = "png", dev.args = list(type = "cairo"), dpi = 192, fig.path = "figures/", comment = NA, results = 'markup', tidy = F, message = F, warning = F, echo = T)
