@@ -13,7 +13,8 @@ finemapr_guess_finemap <- function()
     finemapr_finemap = finemapr_guess_finemap(),
     # plot
     finemapr_label_size = 4,
-    top_rank = 5
+    top_rank = 5,
+    lim_prob = c(0, 1.5)
   )
   
   ind_set <- !(names(op_finemapr) %in% names(op))
