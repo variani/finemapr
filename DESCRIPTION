@@ -19,6 +19,7 @@ Suggests:
 Collate:
     'package.R'
     'finemap.R'
+    'caviar.R'
     'classFinemaprFinemap.R'
     'zzz.R'
 RoxygenNote: 6.0.1
