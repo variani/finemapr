@@ -15,7 +15,7 @@ make
 # install in a local directory
 mkdir -p ~/apps/caviar
 cp *CAVIAR ~/apps/caviar
-cp sample_data/ ~/apps/caviar/sample_data/
+cp -r sample_data/ ~/apps/caviar/sample_data/
 
 # run example 1
 ./CAVIAR -c 2 -z sample_data/50_LD.txt -l sample_data/50_Z.txt -o log
