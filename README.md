@@ -1,6 +1,9 @@
 # finemapr
 
-R wrapper to fine-mappers
+R wrapper to fine-mappers:
+
+- CAVIAR https://github.com/fhormoz/caviar
+- FINEMAP http://www.christianbenner.com/
 
 ## FINEMAP example
 
