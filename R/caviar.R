@@ -111,8 +111,8 @@ run_caviar <- function(tab, ld,
   out <- list(cmd = cmd, ret = ret_run, status = status_run, log = log,
     tab = tab, snp = snp, set = set_ordered)
   
-  oldClass(out) <- c("Finemapr", "FinemaprCaviar", oldClass(out))
-   
+  oldClass(out) <- c("FinemaprCaviar", "Finemapr", oldClass(out))
+  
   return(out) 
 }
 

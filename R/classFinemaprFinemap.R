@@ -51,15 +51,6 @@ plot.FinemaprFinemap <- function(x,
 # Custom methods
 #---------------
 
-#' @export plot_ncausal
-plot_ncausal <- function(x, ...) UseMethod("plot_ncausal")
-
-#' @export plot_config
-plot_config <- function(x, ...) UseMethod("plot_config")
-
-#' @export plot_snp
-plot_snp <- function(x, ...) UseMethod("plot_snp")
-
 #' @rdname FinemaprFinemap
 #' @export
 plot_ncausal.FinemaprFinemap <- function(x, 

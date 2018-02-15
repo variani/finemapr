@@ -8,7 +8,12 @@ run_caviar(tab, ld, dir_run = "run_caviar",
   tool = getOption("finemapr_caviar"), args = "")
 }
 \description{
-Run CAVIAR.
+Output file (`*_post`): 
+ column #1 is the variant name;
+ column #2 is the posterior prob. that the variant is causal
+   (https://github.com/fhormoz/caviar/issues/1#issuecomment-286521771);
+ column #3 is the amount that this variant contributes to 
+   95%-causal credible set.
 }
 \examples{
 ex <- example_finemap()

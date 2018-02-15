@@ -22,7 +22,7 @@ run_finemap <- function(tab, ld, n,
   ### process input data: `tab` and `ld`
   tab <- as_data_frame(tab)
   stopifnot(ncol(tab) >= 2)
-  names(tab) <- c("snp", "zscore")
+  names(tab)[c(1, 2)] <- c("snp", "zscore")
  
    tab <- filter(tab, !is.na(zscore)) # exclude missing Z-scores
   
@@ -88,8 +88,8 @@ run_finemap <- function(tab, ld, n,
   out <- list(cmd = cmd, ret = ret_run, status = status_run, log = log,
     tab = tab, snp = snp, config = config, ncausal = ncausal)
   
-  oldClass(out) <- c("FinemaprFinemap", oldClass(out))
-   
+  oldClass(out) <- c("FinemaprFinemap", "Finemapr", oldClass(out))
+  
   return(out) 
 }
 
