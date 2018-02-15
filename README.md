@@ -4,7 +4,31 @@ R interface to fine-mappers:
 
 - FINEMAP http://www.christianbenner.com/
 - CAVIAR https://github.com/fhormoz/caviar
-- (todo) PAINTOR https://github.com/gkichaev/PAINTOR_V3.0
+- PAINTOR https://github.com/gkichaev/PAINTOR_V3.0
+
+By using `finemapr`, your input files are automatically prepared for each tool, the analysis workflow is tool-independent; and exploration of fine-mapping results is powered by R in printing/plotting/data export.
+
+## Unified analysis workflow
+
+```r
+# set up
+options(finemapr_finemap = "<path to fine-mapping tool>")
+
+# read input files
+my_zscores <- read_zscores("<my_scores.tab>")
+my_ld <- read_ld("<my_ld.tab>")
+
+# run analysis
+out <- run_<tool>(my_zscores, my_ld, args = "<custom arguments>")
+
+# explore results
+print(out)
+head(out$snp) # main table of results
+plot(out)
+
+# export results
+write.table(out$snp, "<my_results.tab>")
+```
 
 ## FINEMAP example
 
