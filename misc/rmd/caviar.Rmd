@@ -18,7 +18,7 @@ load_all("~/git/variani/finemapr")
 # specify path to CAVIAR (user-specific)
 options(finemapr_caviar = "~/apps/caviar/CAVIAR")
 
-# load example data
+# load the same example data as for FINEMAP
 ex <- example_finemap()
 
 # run the tool
