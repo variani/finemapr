@@ -29,3 +29,37 @@ cp -r sample_data/ ~/apps/caviar/sample_data/
 ./CAVIAR -c 2 -z ~/apps/finemap/example/region1.z -l ~/apps/finemap/example/region1.ld -o log
 head log_set # prints two snps: rs15 & rs47
 ```
+
+## PAINTOR
+
+- https://github.com/gkichaev/PAINTOR_V3.0
+- running without annotations: https://github.com/gkichaev/PAINTOR_V3.0/issues/11#issuecomment-303135031
+
+```
+mkdir install_paintor
+cd install_paintor
+
+# compile
+git clone https://github.com/gkichaev/PAINTOR_V3.0.git
+cd PAINTOR_V3.0
+bash install.sh
+
+# create example file with 1 region
+mkdir SampleData1
+cp SampleData/Locus1 SampleData/Locus1.* SampleData1/
+head -n 1 SampleData/input.files > SampleData1/input.files
+
+# install in a local directory
+mkdir -p ~/apps/paintor
+cp PAINTOR ~/apps/paintor
+cp -r CANVIS ~/apps/paintor/CANVIS
+cp -r PAINTOR_Utilities ~/apps/paintor/PAINTOR_Utilities
+cp -r SampleData ~/apps/paintor/SampleData
+cp -r SampleData1 ~/apps/paintor/SampleData1
+
+# run example on Locus 1
+./PAINTOR -input SampleData1/input.files -in SampleData1/ -out SampleData1/ -Zhead Zscore -LDname ld -enumerate 2 -annotations DHS
+```
+
+
+
