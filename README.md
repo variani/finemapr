@@ -8,7 +8,7 @@ R interface to fine-mappers:
 
 By using `finemapr`, your input files are automatically prepared for each tool, the analysis workflow is tool-independent; and exploration of fine-mapping results is powered by R in printing/plotting/data export.
 
-## Unified analysis workflow
+## Tool-independent analysis workflow
 
 ```r
 # set up
