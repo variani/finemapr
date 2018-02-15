@@ -1,9 +1,10 @@
 # finemapr
 
-R wrapper to fine-mappers:
+R interface to fine-mappers:
 
-- CAVIAR https://github.com/fhormoz/caviar
 - FINEMAP http://www.christianbenner.com/
+- CAVIAR https://github.com/fhormoz/caviar
+- (todo) PAINTOR https://github.com/gkichaev/PAINTOR_V3.0
 
 ## FINEMAP example
 
