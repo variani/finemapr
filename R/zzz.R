@@ -1,17 +1,19 @@
-finemapr_guess_finemap <- function()
+finemapr_guess_tool <- function(tool = c("finemap", "caviar"))
 {
-  switch(Sys.info()[["nodename"]],
-    "topoki" = "~/apps/finemap/finemap",
-    "tau.local" = "~/apps/finemap/finemap",
-    "finemap")
-}
-
-finemapr_guess_caviar <- function()
-{
-  switch(Sys.info()[["nodename"]],
-    "topoki" = "~/apps/caviar/CAVIAR",
-    "tau.local" = "~/apps/caviar/CAVIAR",
-    "finemap")
+  tool <- match.arg(tool)
+  
+  tool_bin <- switch(tool,
+    "finemap" = "finemap",
+    "caviar" = "CAVIAR",
+    stop())
+  
+  path_apps <- file.path("~/apps/", tool)
+  file_apps <- file.path(path_apps, tool_bin)
+  if(file.exists(file_apps)) {
+    return(file_apps)
+  }
+  
+  return(tool_bin)
 }
 
 .onLoad <- function(libname, pkgname) {
@@ -19,8 +21,8 @@ finemapr_guess_caviar <- function()
   
   op_finemapr <- list(
     # paths to tools
-    finemapr_finemap = finemapr_guess_finemap(),
-    finemapr_caviar = finemapr_guess_caviar(),
+    finemapr_finemap = finemapr_guess_tool("finemap"),
+    finemapr_caviar = finemapr_guess_tool("caviar"),
     # plot
     finemapr_label_size = 4,
     top_rank = 5,

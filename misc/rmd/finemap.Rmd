@@ -4,8 +4,14 @@ output:
     keep_md: true
 ---
 
+
 ```{r options, echo = F}
 opts_chunk$set(dev = "png", dev.args = list(type = "cairo"), dpi = 192, fig.path = "figures/", comment = NA, results = 'markup', tidy = F, message = F, warning = F, echo = T)
+```
+
+```{r inc, echo = F}
+library(devtools)
+load_all("~/git/variani/finemapr")
 ```
 
 ```{r ex}
@@ -31,7 +37,7 @@ out <- run_finemap(ex$tab1, ex$ld1, ex$n1, args = "--n-causal-max 3")
 print(out)
 ```
 
-```{r plot_finemap, fig.width = 6, fig.height = 8}
+```{r plot_finemap, fig.width = 6, fig.height = 9}
 plot(out, label_size = 3, grid_ncol = 1)
 ```
 

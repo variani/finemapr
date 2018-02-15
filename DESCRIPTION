@@ -21,5 +21,6 @@ Collate:
     'finemap.R'
     'caviar.R'
     'classFinemaprFinemap.R'
+    'classFinemaprCaviar.R'
     'zzz.R'
 RoxygenNote: 6.0.1

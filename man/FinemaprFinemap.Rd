@@ -15,15 +15,17 @@
   label_size = getOption("finemapr_label_size"),
   label_size_config = label_size, label_size_snp = label_size,
   top_rank = getOption("top_rank"), top_rank_config = top_rank,
-  top_rank_snp = top_rank, ...)
+  top_rank_snp = top_rank, lim_prob = getOption("lim_prob"),
+  lim_prob_config = lim_prob, lim_prob_snp = lim_prob,
+  lim_prob_ncausal = lim_prob, ...)
 
-\method{plot_ncausal}{FinemaprFinemap}(x, ...)
+\method{plot_ncausal}{FinemaprFinemap}(x, lim_prob = c(0, 1), ...)
 
-\method{plot_config}{FinemaprFinemap}(x, xlim_config = c(0, 1.5),
+\method{plot_config}{FinemaprFinemap}(x, lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
   top_rank = getOption("top_rank"), ...)
 
-\method{plot_snp}{FinemaprFinemap}(x, xlim_snp = c(0, 1.5),
+\method{plot_snp}{FinemaprFinemap}(x, lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
   top_rank = getOption("top_rank"), ...)
 }

@@ -1,5 +1,12 @@
 
 #' Run CAVIAR.
+#' 
+#' Output file (`*_post`): 
+#'  column #1 is the variant name;
+#'  column #2 is the posterior prob. that the variant is causal
+#'    (https://github.com/fhormoz/caviar/issues/1#issuecomment-286521771);
+#'  column #3 is the amount that this variant contributes to 
+#'    95%-causal credible set.
 #'
 #' @examples
 #' ex <- example_finemap()
@@ -19,9 +26,10 @@ run_caviar <- function(tab, ld,
   stopifnot(!is.null(colnames(ld)))
   
   stopifnot(!is.null(tool))
+  stopifnot(file.exists(tool))
   
   ### var
-  log_filename <- "finemapr_caviar"
+  log_filename <- "log"
   log_set <- file.path(dir_run, paste0(log_filename, "_set"))
   log_post <- file.path(dir_run, paste0(log_filename, "_post"))
   log_log <- file.path(dir_run, paste0(log_filename, ".log"))
@@ -80,21 +88,30 @@ run_caviar <- function(tab, ld,
     return(out) 
   }
   
-  # read output tables
-  post <- read_tsv(file.path(dir_run, paste0(log_filename, "_post")))
+  log <- read_lines(log_log)
   
-  stopifnot(ncol(post) == 3)
-  names(post) <- c("snp", "snp_prob_set", "snp_prob")
+  ### read output tables
+  snp <- read_tsv(file.path(dir_run, paste0(log_filename, "_post")))
   
-  post <- arrange(post, -snp_prob)
+  stopifnot(ncol(snp) == 3)
+  names(snp) <- c("snp", "snp_prob_set", "snp_prob")
   
+  snp <- arrange(snp, -snp_prob) %>%
+    mutate(rank = seq(1, n())) %>%
+    select(rank, everything())
+  
+  # `set` of snps
   set <- read_lines(file.path(dir_run, paste0(log_filename, "_set")))
+
+  # order snps in `set`
+  set_ordered <- left_join(data_frame(snp = set), snp, by = "snp") %>% 
+    arrange(rank) %$% snp
 
   ### return
   out <- list(cmd = cmd, ret = ret_run, status = status_run, log = log,
-    tab = tab, post = post, set = set)
+    tab = tab, snp = snp, set = set_ordered)
   
-  oldClass(out) <- c("FinemaprCaviar", oldClass(out))
+  oldClass(out) <- c("Finemapr", "FinemaprCaviar", oldClass(out))
    
   return(out) 
 }

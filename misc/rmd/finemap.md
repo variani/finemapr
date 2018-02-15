@@ -7,6 +7,9 @@ output:
 
 
 
+
+
+
 ```r
 # specify where the FINEMAP tool is located (user-specific)
 # - the user needs to download and install the tool before the analysis
@@ -36,13 +39,13 @@ print(out)
  - see log output in `log`
  - tables of results: `config`, `snp`, `ncausal`
  - config:
-# A tibble: 8,086 x 4
+# A tibble: 8,410 x 4
    rank config         config_prob config_log10bf
   <int> <chr>                <dbl>          <dbl>
 1     1 rs15,rs47           0.607            42.7
 2     2 rs15,rs42,rs47      0.0326           43.1
 3     3 rs15,rs34,rs47      0.0222           42.9
-# ... with 8,083 more rows
+# ... with 8,407 more rows
 ```
 
 
