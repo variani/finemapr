@@ -24,7 +24,7 @@ run_finemap <- function(tab, ld, n,
   stopifnot(ncol(tab) >= 2)
   names(tab)[c(1, 2)] <- c("snp", "zscore")
  
-   tab <- filter(tab, !is.na(zscore)) # exclude missing Z-scores
+  tab <- filter(tab, !is.na(zscore)) # exclude missing Z-scores
   
   snps <- tab$snp
   stopifnot(all(snps %in% rownames(ld)))
@@ -40,7 +40,7 @@ run_finemap <- function(tab, ld, n,
   #stopifnot(ret_dir_create)
   
   ### write files
-  write_delim(tab, file.path(dir_run, "region.z"), 
+  write_delim(tab[, 1:2], file.path(dir_run, "region.z"), 
     delim = " ", col_names = FALSE)
   write.table(ld, file.path(dir_run, "region.ld"), 
     sep = " ", row.names = FALSE, col.names = FALSE)
