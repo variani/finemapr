@@ -163,3 +163,7 @@ plot(out_paintor, label_size = 3)
 ```
 
 ![](misc/rmd/figures/plot_paintor-1.png)
+
+## Related projects
+
+- [FineMapping pipeline using GWAS summary statistics](https://github.com/jinghuazhao/FM-pipeline)
