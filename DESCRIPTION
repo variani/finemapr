@@ -13,11 +13,15 @@ Imports:
     readr,
     magrittr,
     ggplot2,
-    cowplot
+    cowplot,
+    data.table
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Collate:
     'package.R'
+    'read.R'
     'finemap.R'
     'caviar.R'
     'paintor.R'
@@ -27,3 +31,4 @@ Collate:
     'classFinemaprCaviar.R'
     'zzz.R'
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

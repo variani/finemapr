@@ -4,4 +4,7 @@ run_*/
 # rmd
 *\.html
 *_cache/
+inst/doc
 
+# vignettes/
+vignettes/*figures/

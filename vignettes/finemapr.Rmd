@@ -1,0 +1,163 @@
+---
+title: "Fine-mapping analysis pipeline by `finemapr`"
+author: "Andrey Ziyatdinov"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", # NA
+  dev = "png", dev.args = list(type = "cairo"), dpi = 92, fig.path = "figures/", 
+  fig.width = 4, fig.height = 4,
+  results = 'markup', tidy = F, message = T, warning = T, echo = T
+)
+```
+
+# About `finemapr`
+
+`finemapr` is an R package that provides an interface to fine-mapping tools:
+
+- FINEMAP http://www.christianbenner.com/
+- CAVIAR https://github.com/fhormoz/caviar
+- PAINTOR https://github.com/gkichaev/PAINTOR_V3.0
+
+By using `finemapr`, your input files are automatically prepared for each tool, the analysis workflow is tool-independent; and exploration of fine-mapping results is powered by R in printing/plotting/data export.
+
+
+## Tool-independent scheme of analysis workflow
+
+```r
+# set up
+options(finemapr_<tool> = "<path to fine-mapping tool>")
+
+# read input files
+my_zscores <- read_zscores("<my_scores.tab>")
+my_ld <- read_ld("<my_ld.tab>")
+
+# run analysis
+out <- run_<tool>(my_zscores, my_ld, args = "<custom arguments>")
+
+# explore results
+print(out)
+head(out$snp) # main table of results
+plot(out)
+
+# export results
+write.table(out$snp, "<my_results.tab>")
+```
+
+# Installation
+
+The user needs to download and install a fine-mapping tool before the analysis.
+An example of installation commands used in `finemapr` by default is given [here](https://github.com/variani/finemapr/blob/master/misc/install-finemaping-tools.md). 
+
+After installing, for example, the FINEMAP tool, the user specify for `finemapr` where the tool is located:
+
+```{r, eval = F}
+options(finemapr_finemap = "~/apps/finemap/finemap")
+```
+
+# Load packages
+
+We load packages for the analysis conducted in this document.
+
+```{r inc}
+library(devtools)
+load_all("~/git/variani/finemapr")
+
+library(magrittr)
+library(dplyr)  
+library(ggplot2)  
+theme_set(theme_linedraw())
+```
+
+# Example data
+
+We load example data copied from the FINEMAP website (http://www.christianbenner.com/).
+This simulated dataset has two causal variants `rs15` and `rs47`.
+
+```{r example_data}
+file1_z <- system.file("extdata/region1.z", package = "finemapr")
+file1_ld <- system.file("extdata/region1.ld", package = "finemapr")
+
+z1 <- read_zscore(file1_z)
+ld1 <- read_ld(file1_ld, snps = z1$snp)
+n1 <- 5363
+```
+
+## Explore z-scores
+
+Top 5 z-scores:
+
+```{r top5, results = "asis"}
+z1 %>% arrange(-abs(zscore)) %>% head(5) %>% kable(digits = 1)
+```
+
+```{r plot_zscore}
+ggplot(z1, aes(zscore)) + geom_histogram()
+```
+
+```{r plot_pval}
+mutate(z1, pval = pchisq(zscore^2, df = 1, lower.tail = FALSE)) %>%
+  ggplot(aes(pval)) + geom_histogram()
+```
+
+# Run tools
+
+## Run FINEMAP
+
+```{r run_finemap}
+options(finemapr_finemap = "~/apps/finemap/finemap")
+
+out_finemap <- run_finemap(z1, ld1, n1, args = "--n-causal-max 3")
+```
+
+```{r print_finemap}
+print(out_finemap)
+```
+
+```{r plot_finemap, fig.width = 6, fig.height = 9}
+plot(out_finemap, label_size = 3, grid_ncol = 1)
+```
+
+## Run CAVIAR
+
+```{r run_caviar}
+options(finemapr_caviar = "~/apps/caviar/CAVIAR")
+
+out_caviar <- run_caviar(z1, ld1, args = "-c 3")
+```
+
+```{r print_caviar}
+print(out_caviar)
+```
+
+```{r plot_caviar, fig.width = 6, fig.height = 3}
+plot(out_caviar, label_size = 3)
+```
+
+## Run PAINTOR
+
+```{r run_paintor}
+options(finemapr_paintor = "~/apps/paintor/PAINTOR")
+
+out_paintor <- run_paintor(z1, ld1, n1, args = "-enumerate 3")
+```
+
+```{r print_paintor}
+print(out_paintor)
+```
+
+```{r plot_paintor, fig.width = 6, fig.height = 3}
+plot(out_paintor, label_size = 3)
+```
+
+# Conclusions
+
+All three fine-mapping tools estimated the poterior causal probabilities of the two variants, `rs15` and `rs47`, very close to 1.
