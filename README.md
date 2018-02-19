@@ -29,7 +29,7 @@ plot(out)
 # export results
 write.table(out$snp, "<my_results.tab>")
 ```
-# Examples
+## Examples
 
 See the vignette [Fine-mapping analysis pipeline by `finemapr`](https://variani.github.io/finemapr/vignettes/finemapr.html).
 
