@@ -12,7 +12,7 @@ By using `finemapr`, your input files are automatically prepared for each tool, 
 
 ```r
 # set up
-options(finemapr_finemap = "<path to fine-mapping tool>")
+options(finemapr_<tool> = "<path to fine-mapping tool>")
 
 # read input files
 my_zscores <- read_zscores("<my_scores.tab>")
