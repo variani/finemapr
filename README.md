@@ -1,5 +1,7 @@
 # finemapr
 
+![](misc/figures/finemap-2causal.png)
+
 R interface to fine-mappers:
 
 - FINEMAP http://www.christianbenner.com/
