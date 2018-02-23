@@ -110,6 +110,19 @@ run_paintor <- function(tab, ld, n, annot, annotations,
     mutate(rank = seq(1, n())) %>%
     select(rank, everything())
   
+  # enrich
+  dat_enrich <- read_delim(file.path(dir_run, "Enrichment.Values"), delim = " ") 
+  stopifnot(nrow(dat_enrich) == 1)
+  
+  gamma_val <- as.numeric(dat_enrich)
+  
+  # https://github.com/gkichaev/PAINTOR_V3.0/wiki/4.-Interpretation-of-Output#gamma-estimates
+  enrich_prob <- c(1 / (1 + exp(gamma_val[1])), 
+    1 / (1 + exp(gamma_val[1] + gamma_val[-1])))
+  
+  enrich <- data_frame(annot = colnames(dat_enrich), 
+    gamma = gamma_val, enrich_prob)
+
   # logBF
   lines_logbf <- read_lines(file.path(dir_run, "Log.BayesFactor"))
   stopifnot(length(lines_logbf) == 1)
@@ -117,7 +130,8 @@ run_paintor <- function(tab, ld, n, annot, annotations,
   
   ### return
   out <- list(cmd = cmd, ret = ret_run, status = status_run, #log = log,
-    annotations = annotations, tab = tab, snp = snp, logBF = logBF)
+    annotations = annotations, tab = tab, snp = snp, 
+    enrich = enrich, logBF = logBF)
   
   oldClass(out) <- c("FinemaprPaintor", "Finemapr", oldClass(out))
    
