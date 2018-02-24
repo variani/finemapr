@@ -38,3 +38,5 @@ See the vignette [Fine-mapping analysis pipeline by `finemapr`](https://variani.
 ## Related projects
 
 - [FineMapping pipeline using GWAS summary statistics](https://github.com/jinghuazhao/FM-pipeline)
+- [Finemapping pipeline that automates the usage of PAINTOR, and CAVIAR BF](https://github.com/theboocock/fine_mapping_pipeline)
+
