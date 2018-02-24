@@ -46,7 +46,7 @@ run_finemap <- function(tab, ld, n,
     sep = " ", row.names = FALSE, col.names = FALSE)
 
   lines_master <- c("z;ld;snp;config;log;n-ind",
-    paste0("region.z;region.ld;region.snp;region.config;region.log;",n))
+    paste0("region.z;region.ld;region.snp;region.config;region.log;", num_ind))
   write_lines(lines_master, file.path(dir_run, "region.master"))
   
   ### run tool
