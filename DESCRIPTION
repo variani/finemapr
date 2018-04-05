@@ -21,6 +21,7 @@ Suggests:
     rmarkdown
 Collate:
     'package.R'
+    'sumstats.R'
     'read.R'
     'finemap.R'
     'caviar.R'
