@@ -13,6 +13,7 @@
 #' @importFrom magrittr %>% %$%
 #' @importFrom readr read_delim write_delim write_lines read_lines read_tsv cols
 #'
+#' @import Matrix
 #' @import ggplot2
 #' @importFrom cowplot plot_grid
 {}
