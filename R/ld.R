@@ -32,7 +32,7 @@ ref_vcf <- function(chr = 16, start = 53.767e6, end = 53.768e6, pop = "EUR",
 #'
 #' @export
 ref_ld <- function(vcf, tol = 1e-10, measure = c("R.squared", "D.prime"),
-  verbose = 1)
+  verbose = 0)
 {
   ### args
   stopifnot(!missing(vcf))
