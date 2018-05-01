@@ -9,7 +9,7 @@
 \alias{plot_snp.FinemaprFinemap}
 \title{S3 class FinemaprFinemap.}
 \usage{
-\method{print}{FinemaprFinemap}(x, ...)
+print.FinemaprFinemap(x, ...)
 
 \method{plot}{FinemaprFinemap}(x, grid_nrow = NULL, grid_ncol = NULL,
   label_size = getOption("finemapr_label_size"),

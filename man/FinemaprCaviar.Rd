@@ -7,7 +7,7 @@
 \alias{plot_snp.FinemaprCaviar}
 \title{S3 class FinemaprCaviar.}
 \usage{
-\method{print}{FinemaprCaviar}(x, ...)
+print.FinemaprCaviar(x, ...)
 
 \method{plot}{FinemaprCaviar}(x, ...)
 

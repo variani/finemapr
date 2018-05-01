@@ -11,7 +11,7 @@
 \usage{
 plot_ncausal(x, ...)
 
-\method{print}{Finemapr}(x, ...)
+print.Finemapr(x, ...)
 
 \method{plot}{Finemapr}(x, ...)
 

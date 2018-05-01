@@ -14,8 +14,11 @@ Imports:
     magrittr,
     ggplot2,
     cowplot,
-    data.table
+    data.table,
+    Matrix
 Suggests:
+    proxysnps,
+    rsnps,
     testthat,
     knitr,
     rmarkdown
@@ -32,6 +35,7 @@ Collate:
     'classFinemaprFinemap.R'
     'classFinemaprCaviar.R'
     'finemapr.R'
+    'ld.R'
     'zzz.R'
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

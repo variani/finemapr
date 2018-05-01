@@ -5,7 +5,7 @@
 \alias{print.FinemaprPaintor}
 \title{S3 class FinemaprPaintor.}
 \usage{
-\method{print}{FinemaprPaintor}(x, ...)
+print.FinemaprPaintor(x, ...)
 }
 \description{
 S3 class FinemaprPaintor.
