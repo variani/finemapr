@@ -4,8 +4,8 @@ finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor"))
   
   tool_bin <- switch(tool,
     "finemap" = "finemap",
-    "caviar" = "CAVIAR",
-    "paintor" = "PAINTOR",
+    "caviar" = "caviar",
+    "paintor" = "paintor",
     stop())
   
   path_apps <- file.path("~/apps/", tool)

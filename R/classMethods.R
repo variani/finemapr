@@ -23,6 +23,12 @@ plot_config <- function(x, ...) UseMethod("plot_config")
 #' @export plot_snp
 plot_snp <- function(x, ...) UseMethod("plot_snp")
 
+#' @export process_tab
+process_tab <- function(x, ...) UseMethod("process_tab")
+
+#' @export process_ld
+process_ld <- function(x, ...) UseMethod("process_ld")
+
 
 #------------------------
 # Print methods
