@@ -5,6 +5,99 @@
 #'
 #' @exportClass FinemaprFinemap
 
+#---------------------
+# Finemapping methods
+#---------------------
+
+#' @rdname FinemaprFinemap
+#' @export
+write_files.FinemaprFinemap <- function(x, ...)
+{
+  ### create `dir`
+  ret_dir_create <- dir.create(x$dir_run, showWarnings = FALSE, recursive = TRUE)
+  #stopifnot(ret_dir_create)
+
+  ### write file of Z-scores
+  ret <- lapply(seq_along(x$tab), function(locus) {
+    write_delim(x$tab[[locus]], 
+      file.path(x$dir_run, filename_zscore(x, locus)), 
+      delim = " ", col_names = FALSE)
+  })
+  
+  ### write file of ld
+  ret <- lapply(seq_along(x$ld), function(locus) {
+    write.table(x$ld[[locus]],
+      file.path(x$dir_run, filename_ld(x, locus)), 
+      sep = " ", row.names = FALSE, col.names = FALSE)
+  })
+
+  ### write master file
+  lines_master <- c("z;ld;snp;config;log;n-ind",
+    sapply(seq(1, x$num_loci), function(locus) {
+      paste0(
+        filename_zscore(x, locus), ";", 
+        filename_ld(x, locus), ";",
+        filename_snp(x, locus), ";",
+        filename_config(x, locus), ";",
+        filename_log(x, locus), ";",
+        x$n[[locus]])
+    }))
+        
+  write_lines(lines_master, file.path(x$dir_run, filename_master(x)))
+}  
+
+#' @rdname FinemaprFinemap
+#' @export
+run_tool.FinemaprFinemap <- function(x, ...)
+{
+  tool_input <- paste0("--sss --log ", x$args, " --in-files ", filename_master(x))
+  cmd <- paste(x$tool, tool_input)
+  
+  dir_cur <- getwd()
+  setwd(x$dir_run)
+  
+  ret_run <- try({
+    system(cmd, input = tool_input)
+  })
+  
+  setwd(dir_cur)
+
+  ### return
+  x$ret_run <- ret_run
+  
+  return(x)
+}
+
+#' @rdname FinemaprFinemap
+#' @export
+collect_results.FinemaprFinemap <- function(x, ...)
+{
+  results <- try({
+    lapply(seq(1, x$num_loci), function(locus) {
+      log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      list(
+        log = log,
+        snp = read_delim(file.path(x$dir_run, filename_snp(x, locus)), delim = " ", col_types = cols()),
+        config = read_delim(file.path(x$dir_run, filename_config(x, locus)), delim = " ", col_types = cols()),
+        ncausal = finemap_extract_ncausal(log))
+    })
+  })
+  
+  ### check status and return
+  x$status <- ifelse(class(results)[1] == "try-error", 1, 0)
+  if(x$status == 0) {
+    x$log <- lapply(results, function(x) x$log)
+    x$snp <- lapply(results, function(x) x$snp)
+    x$config <- lapply(results, function(x) x$config)
+    x$ncausal <- lapply(results, function(x) x$ncausal)
+  }
+  
+  return(x)
+}
+#---------------------
+# Print/plot methods
+#---------------------
+
 #' @rdname FinemaprFinemap
 #' @export
 print.FinemaprFinemap <- function(x, ...)
@@ -53,11 +146,11 @@ plot.FinemaprFinemap <- function(x,
 
 #' @rdname FinemaprFinemap
 #' @export
-plot_ncausal.FinemaprFinemap <- function(x, 
+plot_ncausal.FinemaprFinemap <- function(x, locus = 1,
   lim_prob = c(0, 1), # automatic limits
   ...)
 {
-  ptab <- x$ncausal
+  ptab <- x$ncausal[[locus]]
   
   sum_prop_zero <- filter(ptab, ncausal_num == 0)[["prob"]]  %>% sum
   if(sum_prop_zero == 0) {

@@ -7,6 +7,7 @@
 \alias{plot.Finemapr}
 \alias{plot_snp.Finemapr}
 \alias{process_tab.Finemapr}
+\alias{process_ld.Finemapr}
 \title{S3 class Finemapr.}
 \usage{
 plot_ncausal(x, ...)
@@ -20,6 +21,8 @@ print.Finemapr(x, ...)
   top_rank = getOption("top_rank"), ...)
 
 \method{process_tab}{Finemapr}(x, tabs, ...)
+
+\method{process_ld}{Finemapr}(x, lds, ...)
 }
 \description{
 S3 class Finemapr.

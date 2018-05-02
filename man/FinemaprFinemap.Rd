@@ -2,6 +2,7 @@
 % Please edit documentation in R/classFinemaprFinemap.R
 \name{FinemaprFinemap}
 \alias{FinemaprFinemap}
+\alias{write_files.FinemaprFinemap}
 \alias{print.FinemaprFinemap}
 \alias{plot.FinemaprFinemap}
 \alias{plot_ncausal.FinemaprFinemap}
@@ -9,6 +10,8 @@
 \alias{plot_snp.FinemaprFinemap}
 \title{S3 class FinemaprFinemap.}
 \usage{
+\method{write_files}{FinemaprFinemap}(x, ...)
+
 print.FinemaprFinemap(x, ...)
 
 \method{plot}{FinemaprFinemap}(x, grid_nrow = NULL, grid_ncol = NULL,

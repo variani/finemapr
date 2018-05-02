@@ -29,6 +29,40 @@ process_tab <- function(x, ...) UseMethod("process_tab")
 #' @export process_ld
 process_ld <- function(x, ...) UseMethod("process_ld")
 
+#' @export process_n
+process_n <- function(x, ...) UseMethod("process_n")
+
+#' @export write_files
+write_files <- function(x, ...) UseMethod("write_files")
+
+#' @export run_tool
+run_tool <- function(x, ...) UseMethod("run_tool")
+
+#' @export collect_results
+collect_results <- function(x, ...) UseMethod("collect_results")
+
+#------------------------
+# File names
+#------------------------
+
+#' @export filename_
+filename_zscore <- function(x, ...) UseMethod("filename_zscore")
+
+#' @export filename_
+filename_ld <- function(x, ...) UseMethod("filename_ld")
+
+#' @export filename_
+filename_snp <- function(x, ...) UseMethod("filename_snp")
+
+#' @export filename_
+filename_config <- function(x, ...) UseMethod("filename_config")
+
+#' @export filename_
+filename_log <- function(x, ...) UseMethod("filename_log")
+
+#' @export filename_
+filename_master <- function(x, ...) UseMethod("filename_master")
+
 
 #------------------------
 # Print methods

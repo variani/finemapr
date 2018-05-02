@@ -110,25 +110,3 @@ finemap_extract_ncausal <- function(log)
   return(tab)
 }
 
-#' @export
-example_finemap <- function(dir_example = "~/apps/finemap/example/")
-{
-  ### read
-  master <- read_delim(file.path(dir_example, "data"), 
-    delim = ";", col_names = TRUE)
-
-  tab1 <- read_delim(file.path(dir_example, "region1.z"), 
-    delim = " ", col_names = FALSE) 
-  names(tab1) <- c("snp", "zscore")  
-  
-  ld1 <- read_delim(file.path(dir_example, "region1.ld"), 
-    delim = " ", col_names = FALSE) 
-  ld1 <- as.matrix(ld1)
-  rownames(ld1) <- tab1$snp
-  colnames(ld1) <- tab1$snp
-  
-  n1 <- master[["n-ind"]][1]
-  
-  ### return
-  list(tab1 = tab1, ld1 = ld1, n1 = n1)
-}

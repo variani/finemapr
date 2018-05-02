@@ -4,7 +4,7 @@
 \alias{ref_ld}
 \title{https://github.com/slowkow/proxysnps/blob/master/R/get_vcf.R}
 \usage{
-ref_ld(vcf, tol = 1e-10, measure = c("R.squared", "D.prime"), verbose = 1)
+ref_ld(vcf, tol = 1e-10, measure = c("R.squared", "D.prime"), verbose = 0)
 }
 \description{
 https://github.com/slowkow/proxysnps/blob/master/R/get_vcf.R

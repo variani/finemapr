@@ -3,13 +3,14 @@
 #'
 #' @examples
 #' ex <- example_finemap()
-#' out <- finemapr(ex$tab1, ex$ld1, ex$n1, args = "--n-causal-max 1")
+#' out <- finemapr(list(ex$tab1, ex$tab2), list(ex$ld1, ex$ld2), list(ex$n1, ex$n2), args = "--n-causal-max 1")
 #'
 #' @export
 finemapr <- function(tab, ld, n, 
   method = c("finemap"),
   dir_run,
-  tool = getOption("finemapr_finemap"), args = "")
+  tool, args = "",
+  save_ld = FALSE)
 {
   ### arg
   method <- match.arg(method)
@@ -18,8 +19,14 @@ finemapr <- function(tab, ld, n,
   stopifnot(!missing(ld))
   stopifnot(!missing(n))
   
+  if(missing(tool)) {
+    tool <-switch(method,
+      "finemap" = getOption("finemapr_finemap"),
+      stop("error in switch"))
+  }
+  
   ### create an object of class `Finemapr`: basic slots and class attribute
-  out <- list(method = method, 
+  out <- list(method = method, tool = tool,
     dir_run = paste("run", method, sep = "_"), args = args,
     num_loci = ifelse(class(tab)[1] == "list", length(tab), 1))
 
@@ -31,17 +38,22 @@ finemapr <- function(tab, ld, n,
   ### process input
   out <- process_tab(out, tab)
   out <- process_ld(out, ld)
-  # out <- process_n(out, n)
+  out <- process_n(out, n)
   
   ### write files 
-  #write_files(out)
+  write_files(out)
   
   #### run
-  #ret <- run_tool(out)
+  ret <- run_tool(out)
 
   #### read results
-  #out <- read_results(out)
-    
+  out <- collect_results(out)
+  
+  ### return
+  if(!save_ld) {
+    out$ld <- NULL
+  }
+  
   return(out)
 }
 
@@ -137,4 +149,21 @@ process_ld.Finemapr <- function(x, lds, ...)
   return(x)
 }
 
+process_n.Finemapr <- function(x, ns, ...)
+{
+  ### process input
+  if(class(ns)[1] != "list") {
+    ns <- list(ns)
+  }
+  
+  if(length(ns) == 1) {
+    n <- ns[[1]]
+    stopifnot(length(n) == 1)
+    ns <- rep(n, x$num_loci) %>% as.list
+  }
+  stopifnot(length(ns) == x$num_loci)  
 
+  x$n <- ns
+  
+  return(x)
+}
