@@ -4,14 +4,14 @@
 \alias{finemapr}
 \title{Run FINEMAP.}
 \usage{
-finemapr(tab, ld, n, method = c("finemap"), dir_run,
-  tool = getOption("finemapr_finemap"), args = "")
+finemapr(tab, ld, n, method = c("finemap"), dir_run, tool, args = "",
+  save_ld = FALSE, ret = c("results", "tab"))
 }
 \description{
 Run FINEMAP.
 }
 \examples{
 ex <- example_finemap()
-out <- finemapr(ex$tab1, ex$ld1, ex$n1, args = "--n-causal-max 1")
+out <- finemapr(list(ex$tab1, ex$tab2), list(ex$ld1, ex$ld2), list(ex$n1, ex$n2), args = "--n-causal-max 1")
 
 }

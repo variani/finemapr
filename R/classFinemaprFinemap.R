@@ -19,7 +19,8 @@ write_files.FinemaprFinemap <- function(x, ...)
 
   ### write file of Z-scores
   ret <- lapply(seq_along(x$tab), function(locus) {
-    write_delim(x$tab[[locus]], 
+    write_delim(
+      x$tab[[locus]] %>% select(snp, zscore), 
       file.path(x$dir_run, filename_zscore(x, locus)), 
       delim = " ", col_names = FALSE)
   })
@@ -75,10 +76,21 @@ collect_results.FinemaprFinemap <- function(x, ...)
   results <- try({
     lapply(seq(1, x$num_loci), function(locus) {
       log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      
+      snp <- file.path(x$dir_run, filename_snp(x, locus)) %>%
+          read_delim(, delim = " ", col_types = cols())
+      
+      snp <- arrange(snp, -snp_prob) %>%
+      mutate(
+        rank_pp = seq(1, n()),
+        snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
+      select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf)
+      
       list(
         log = log,
-        snp = read_delim(file.path(x$dir_run, filename_snp(x, locus)), delim = " ", col_types = cols()),
-        config = read_delim(file.path(x$dir_run, filename_config(x, locus)), delim = " ", col_types = cols()),
+        snp = snp,
+        config = file.path(x$dir_run, filename_config(x, locus)) %>%
+          read_delim(, delim = " ", col_types = cols()),
         ncausal = finemap_extract_ncausal(log))
     })
   })
@@ -90,6 +102,11 @@ collect_results.FinemaprFinemap <- function(x, ...)
     x$snp <- lapply(results, function(x) x$snp)
     x$config <- lapply(results, function(x) x$config)
     x$ncausal <- lapply(results, function(x) x$ncausal)
+    
+    x$snps_credible <- lapply(x$snp, function(snp) {
+      snp %>% filter(snp_prob_cumsum <= x$prop_credible) %$% snp
+    })
+    
   }
   
   return(x)

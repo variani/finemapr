@@ -7,17 +7,20 @@
 #'
 #' @export
 finemapr <- function(tab, ld, n, 
+  prop_credible = 0.95,
   method = c("finemap"),
   dir_run,
   tool, args = "",
-  save_ld = FALSE)
+  save_ld = FALSE,
+  ret = c("results", "zscore"))
 {
   ### arg
   method <- match.arg(method)
+  ret <- match.arg(ret)
   
-  stopifnot(!missing(tab))
-  stopifnot(!missing(ld))
-  stopifnot(!missing(n))
+  missing_tab <- missing(tab)
+  missing_ld <- missing(ld)
+  missing_n <- missing(n)
   
   if(missing(tool)) {
     tool <-switch(method,
@@ -28,7 +31,8 @@ finemapr <- function(tab, ld, n,
   ### create an object of class `Finemapr`: basic slots and class attribute
   out <- list(method = method, tool = tool,
     dir_run = paste("run", method, sep = "_"), args = args,
-    num_loci = ifelse(class(tab)[1] == "list", length(tab), 1))
+    num_loci = ifelse(class(tab)[1] == "list", length(tab), 1),
+    prop_credible = prop_credible)
 
   class_finemapr <- switch(out$method,
     "finemap" = "FinemaprFinemap",
@@ -36,15 +40,21 @@ finemapr <- function(tab, ld, n,
   oldClass(out) <- c(class_finemapr, "Finemapr", oldClass(out))
 
   ### process input
+  stopifnot(!missing_tab)
   out <- process_tab(out, tab)
+  if(ret == "zscore") return(out)
+  
+  stopifnot(!missing_ld)
   out <- process_ld(out, ld)
+  
+  stopifnot(!missing_n)
   out <- process_n(out, n)
   
   ### write files 
   write_files(out)
   
   #### run
-  ret <- run_tool(out)
+  res <- run_tool(out)
 
   #### read results
   out <- collect_results(out)
@@ -78,13 +88,25 @@ process_tab.Finemapr <- function(x, tabs, ...)
     names_select <- c(
       finemapr_find_name("snp", names_all, strict = TRUE),
       finemapr_find_name("zscore", names_all, strict = TRUE))
+    names_new <- finemapr_names_tab()
+    
+    name_pos <- finemapr_find_name("pos", names_all, strict = FALSE)
+    if(!is.null(name_pos)) {
+      names_select <- c(names_select, name_pos)
+      names_new <- c(names_new, finemapr_names_tab_pos())
+    }
     
     tab <- select_(tab, .dots = names_select)
-    names(tab) <- finemapr_names_tab()
+    names(tab) <- names_new
     
     # manage missing Z-scores
     snps_zscore_missing <- filter(tab, is.na(zscore)) %$% snp 
     tab <- filter(tab, !is.na(zscore)) 
+  
+    # arrange & add `rank_pp` column
+    tab <- arrange(tab, zscore) %>%
+      mutate(rank_z = seq(1, n())) %>%
+      select(rank_z, everything())
   
     list(tab = tab, 
       snps_zscore_missing = snps_zscore_missing)

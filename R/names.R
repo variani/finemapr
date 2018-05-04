@@ -5,6 +5,8 @@ finemapr_names_tab_snp <- function() "snp"
 
 finemapr_names_tab_zscore <- function() "zscore"
 
+finemapr_names_tab_pos <- function() "pos"
+
 finemapr_names_tab <- function() 
 {
   c(finemapr_names_tab_snp(),
@@ -14,14 +16,15 @@ finemapr_names_tab <- function()
 #-----------------
 # Find names
 #-----------------
-finemapr_find_name <- function(target = c("snp", "zscore"), 
+finemapr_find_name <- function(target = c("snp", "zscore", "pos"), 
   candidates, strict = FALSE)
 {
   target <- match.arg(target)
    
   pat <- switch(target,
-    "snp" = "^snp$|^SNP$|^id$|^ID$|^marker$",
+    "snp" = "^snp$|^SNP$|^id$|^ID$|^marker|^Marker",
     "zscore" = "^zscore$|^Zscore$|^z$|^Z$",
+    "pos" = "^pos|^Pos|^bp$|^BP$",
     stop("error in switch"))
     
   matches <- grep(pat, candidates, value = TRUE)
@@ -31,10 +34,12 @@ finemapr_find_name <- function(target = c("snp", "zscore"),
     }
   }
   if(length(matches) > 1) {
-    if(strict) {
-      stop(">1 matches found (`", paste(matches, collapse = ", "), "`); grep pattern '", pat, "'")
-    }
+    stop(">1 matches found (`", paste(matches, collapse = ", "), "`); grep pattern '", pat, "'")
   } 
+    
+  if(length(matches) == 0) {
+    matches <- NULL
+  }
     
   return(matches)
 }

@@ -23,6 +23,9 @@ plot_config <- function(x, ...) UseMethod("plot_config")
 #' @export plot_snp
 plot_snp <- function(x, ...) UseMethod("plot_snp")
 
+#' @export plot_zscore
+plot_zscore <- function(x, ...) UseMethod("plot_zscore")
+
 #' @export process_tab
 process_tab <- function(x, ...) UseMethod("process_tab")
 
@@ -45,22 +48,22 @@ collect_results <- function(x, ...) UseMethod("collect_results")
 # File names
 #------------------------
 
-#' @export filename_
+#' @export filename_zscore
 filename_zscore <- function(x, ...) UseMethod("filename_zscore")
 
-#' @export filename_
+#' @export filename_ld
 filename_ld <- function(x, ...) UseMethod("filename_ld")
 
-#' @export filename_
+#' @export filename_snp
 filename_snp <- function(x, ...) UseMethod("filename_snp")
 
-#' @export filename_
+#' @export filename_config
 filename_config <- function(x, ...) UseMethod("filename_config")
 
-#' @export filename_
+#' @export filename_log
 filename_log <- function(x, ...) UseMethod("filename_log")
 
-#' @export filename_
+#' @export filename_master
 filename_master <- function(x, ...) UseMethod("filename_master")
 
 
