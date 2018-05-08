@@ -20,6 +20,10 @@ filename_config.FinemaprFinemap <- function(x, locus) paste0(locus, ".region.con
 
 #' @rdname FinemaprFinemap
 #' @export
+filename_k.FinemaprFinemap <- function(x, locus) paste0(locus, ".region.k")
+
+#' @rdname FinemaprFinemap
+#' @export
 filename_log.FinemaprFinemap <- function(x, locus) paste0(locus, ".region.log")
 
 #' @rdname FinemaprFinemap

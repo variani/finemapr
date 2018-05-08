@@ -60,6 +60,9 @@ filename_snp <- function(x, ...) UseMethod("filename_snp")
 #' @export filename_config
 filename_config <- function(x, ...) UseMethod("filename_config")
 
+#' @export filename_k
+filename_k <- function(x, ...) UseMethod("filename_k")
+
 #' @export filename_log
 filename_log <- function(x, ...) UseMethod("filename_log")
 
