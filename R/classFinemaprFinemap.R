@@ -33,27 +33,40 @@ write_files.FinemaprFinemap <- function(x, ...)
   })
 
   ### write master file
-  lines_master <- c("z;ld;snp;config;log;n-ind;k",
+  lines_master <- c(
+    paste0("z;ld;snp;config",
+      ifelse(is.null(x$prior_k), "", ";k"),
+      ";log;n-ind"),
     sapply(seq(1, x$num_loci), function(locus) {
       paste0(
         filename_zscore(x, locus), ";", 
         filename_ld(x, locus), ";",
         filename_snp(x, locus), ";",
         filename_config(x, locus), ";",
-        filename_k(x, locus), ";",
+        ifelse(is.null(x$prior_k), "", paste0(filename_k(x, locus), ";")),
         filename_log(x, locus), ";",
         x$n[[locus]])
     }))
-        
   write_lines(lines_master, file.path(x$dir_run, filename_master(x)))
+  
+  ### write optional files
+  if(!is.null(x$prior_k)) {
+    ret <- lapply(seq(1, x$num_loci), function(locus) {
+      write_lines(paste(x$prior_k, collapse = " "), file.path(x$dir_run, filename_k(x, locus)))
+    })
+  }
 }  
 
 #' @rdname FinemaprFinemap
 #' @export
 run_tool.FinemaprFinemap <- function(x, ...)
 {
-  tool_input <- paste0("--sss --log ", x$args, " --in-files ", filename_master(x))
+  tool_input <- paste0("--sss --log ", 
+    ifelse(is.null(x$prior_k), "", " --prior-k "),
+    x$args, " --in-files ", filename_master(x))
   cmd <- paste(x$tool, tool_input)
+  
+  print(cmd)
   
   dir_cur <- getwd()
   setwd(x$dir_run)

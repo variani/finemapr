@@ -11,6 +11,9 @@ finemapr <- function(tab, ld, n,
   method = c("finemap"),
   dir_run,
   tool, args = "",
+  # finemap par
+  prior_k,
+  # other par
   save_ld = FALSE,
   ret = c("results", "zscore"))
 {
@@ -22,6 +25,8 @@ finemapr <- function(tab, ld, n,
   missing_ld <- missing(ld)
   missing_n <- missing(n)
   
+  missing_prior_k <- missing(prior_k)
+  
   if(missing(tool)) {
     tool <-switch(method,
       "finemap" = getOption("finemapr_finemap"),
@@ -31,6 +36,9 @@ finemapr <- function(tab, ld, n,
   ### create an object of class `Finemapr`: basic slots and class attribute
   out <- list(method = method, tool = tool,
     dir_run = paste("run", method, sep = "_"), args = args,
+    # finemap slots
+    prior_k = switch(missing_prior_k + 1, prior_k, NULL),
+    # other slots
     num_loci = ifelse(class(tab)[1] == "list", length(tab), 1),
     prop_credible = prop_credible)
 
