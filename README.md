@@ -10,6 +10,8 @@ R interface to fine-mappers:
 
 By using `finemapr`, your input files are automatically prepared for each tool, the analysis workflow is tool-independent; and exploration of fine-mapping results is powered by R in printing/plotting/data export.
 
+**Note**: the package is still under development and its current version is not stable. The current works aims at switching from `run_<tool>` functions to a more general one, [finemapr](https://github.com/variani/finemapr/blob/master/R/finemapr.R). The later function makes use of S3 method dispatch features. Thus, use this package with caution until the stable release.
+
 ## Tool-independent analysis workflow
 
 ```r
@@ -21,7 +23,8 @@ my_zscores <- read_zscores("<my_scores.tab>")
 my_ld <- read_ld("<my_ld.tab>")
 
 # run analysis
-out <- run_<tool>(my_zscores, my_ld, args = "<custom arguments>")
+# depreciated, but still works: out <- run_<tool>(my_zscores, my_ld, args = "<custom arguments>")
+out <- finemapr(my_zscores, my_ld, method = <tool>, args = "<custom arguments>")
 
 # explore results
 print(out)
