@@ -10,7 +10,7 @@ R interface to fine-mappers:
 
 By using `finemapr`, your input files are automatically prepared for each tool, the analysis workflow is tool-independent; and exploration of fine-mapping results is powered by R in printing/plotting/data export.
 
-**Note**: the package is still under development and its current version is not stable. The current works aims at switching from `run_<tool>` functions to a more general one, [finemapr](https://github.com/variani/finemapr/blob/master/R/finemapr.R). The later function makes use of S3 method dispatch features. Thus, use this package with caution until the stable release.
+**Note**: the package is still under development and its current version is not stable. The current work aims at switching from `run_<tool>` functions to a more general one, [finemapr](https://github.com/variani/finemapr/blob/master/R/finemapr.R). The later function makes use of S3 method dispatch features. Thus, use this package with caution until the stable release comes out.
 
 ## Tool-independent analysis workflow
 
