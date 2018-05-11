@@ -24,7 +24,7 @@ my_ld <- read_ld("<my_ld.tab>")
 
 # run analysis
 # depreciated, but still works: out <- run_<tool>(my_zscores, my_ld, args = "<custom arguments>")
-out <- finemapr(my_zscores, my_ld, method = <tool>, args = "<custom arguments>")
+out <- finemapr(my_zscores, my_ld, method = "<tool>", args = "<custom arguments>")
 
 # explore results
 print(out)
