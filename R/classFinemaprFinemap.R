@@ -95,10 +95,14 @@ collect_results.FinemaprFinemap <- function(x, ...)
           read_delim(, delim = " ", col_types = cols())
       
       snp <- arrange(snp, -snp_prob) %>%
-      mutate(
-        rank_pp = seq(1, n()),
-        snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
-      select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf)
+        mutate(
+          rank_pp = seq(1, n()),
+          snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
+        select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf)
+      
+      snp <- select(x$tab[[locus]], rank_z, snp) %>%
+        left_join(snp, ., by = "snp") %>%
+        select(rank_z, everything())
       
       list(
         log = log,
@@ -133,6 +137,22 @@ collect_results.FinemaprFinemap <- function(x, ...)
 #' @export
 print.FinemaprFinemap <- function(x, ...)
 {
+  cat(" - tables of results: `config`, `snp`, `ncausal`\n")
+  
+  ret <- lapply(seq(1, x$num_loci), function(i) {    
+    cat(" - locus:",i, "\n")
+    cat("  -- config:\n")
+    print(x$config[[i]], n = 3)
+    cat("  -- snp:\n")
+    print(x$snp[[i]], n = 3)
+    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+      100*x$prop_credible, "% credible set", 
+      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+      "\n", sep = "") 
+  })
+
+  return(invisible())
+  
   cat(" - command:", x$cmd, "\n")
     
   if(x$status) {
@@ -204,12 +224,13 @@ plot_ncausal.FinemaprFinemap <- function(x, locus = 1,
 
 #' @rdname FinemaprFinemap
 #' @export
-plot_config.FinemaprFinemap <- function(x, lim_prob = c(0, 1.5), 
+plot_config.FinemaprFinemap <- function(x, locus = 1,
+  lim_prob = c(0, 1.5), 
   label_size = getOption("finemapr_label_size"),  
   top_rank = getOption("top_rank"),  
   ...)
 {
-  ptab <- x$config
+  ptab <- x$config[[locus]]
 
   ptab <- head(ptab, top_rank)
 
@@ -229,12 +250,13 @@ plot_config.FinemaprFinemap <- function(x, lim_prob = c(0, 1.5),
 
 #' @rdname FinemaprFinemap
 #' @export
-plot_snp.FinemaprFinemap <- function(x, lim_prob = c(0, 1.5), 
+plot_snp.FinemaprFinemap <- function(x, locus = 1,
+  lim_prob = c(0, 1.5), 
   label_size = getOption("finemapr_label_size"),  
   top_rank = getOption("top_rank"),  
   ...)
 {
-  ptab <- x$snp
+  ptab <- x$snp[[locus]]
 
   ptab <- head(ptab, top_rank)
 

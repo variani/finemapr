@@ -4,8 +4,8 @@
 \alias{finemapr}
 \title{Run FINEMAP.}
 \usage{
-finemapr(tab, ld, n, method = c("finemap"), dir_run, tool, args = "",
-  save_ld = FALSE, ret = c("results", "tab"))
+finemapr(tab, ld, n, prop_credible = 0.95, method = c("finemap"), dir_run,
+  tool, args = "", prior_k, save_ld = FALSE, ret = c("results", "zscore"))
 }
 \description{
 Run FINEMAP.

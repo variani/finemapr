@@ -18,6 +18,8 @@ Imports:
     Matrix
 Suggests:
     proxysnps,
+    RCurl,
+    gaston,
     rsnps,
     testthat,
     knitr,

@@ -5,6 +5,7 @@
 \alias{filename_ld.FinemaprFinemap}
 \alias{filename_snp.FinemaprFinemap}
 \alias{filename_config.FinemaprFinemap}
+\alias{filename_k.FinemaprFinemap}
 \alias{filename_log.FinemaprFinemap}
 \alias{filename_master.FinemaprFinemap}
 \alias{FinemaprFinemap}
@@ -25,6 +26,8 @@
 \method{filename_snp}{FinemaprFinemap}(x, locus)
 
 \method{filename_config}{FinemaprFinemap}(x, locus)
+
+\method{filename_k}{FinemaprFinemap}(x, locus)
 
 \method{filename_log}{FinemaprFinemap}(x, locus)
 

@@ -112,7 +112,7 @@ process_tab.Finemapr <- function(x, tabs, ...)
     tab <- filter(tab, !is.na(zscore)) 
   
     # arrange & add `rank_pp` column
-    tab <- arrange(tab, zscore) %>%
+    tab <- arrange(tab, -abs(zscore)) %>%
       mutate(rank_z = seq(1, n())) %>%
       select(rank_z, everything())
   
@@ -159,7 +159,7 @@ process_ld.Finemapr <- function(x, lds, ...)
     # check the proportion of `snps_ld_missing`
     prop_snps_missing <- length(snps_ld_missing) / 
       (length(snps_ld_missing) + length(snps_finemap))
-    stopifnot(prop_snps_missing < 0.20)
+    #stopifnot(prop_snps_missing < 0.20)
     
     # subset LD matrix
     ld <- ld[snps_finemap, snps_finemap]
