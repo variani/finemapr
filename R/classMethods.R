@@ -35,6 +35,9 @@ process_ld <- function(x, ...) UseMethod("process_ld")
 #' @export process_n
 process_n <- function(x, ...) UseMethod("process_n")
 
+#' @export process_annot
+process_annot <- function(x, ...) UseMethod("process_annot")
+
 #' @export write_files
 write_files <- function(x, ...) UseMethod("write_files")
 
@@ -43,6 +46,9 @@ run_tool <- function(x, ...) UseMethod("run_tool")
 
 #' @export collect_results
 collect_results <- function(x, ...) UseMethod("collect_results")
+
+#' @export extract_credible_set
+extract_credible_set <- function(x, ...) UseMethod("extract_credible_set")
 
 #------------------------
 # File names
@@ -69,6 +75,8 @@ filename_log <- function(x, ...) UseMethod("filename_log")
 #' @export filename_master
 filename_master <- function(x, ...) UseMethod("filename_master")
 
+#' @export filename_annot
+filename_annot <- function(x, ...) UseMethod("filename_annot")
 
 #------------------------
 # Print methods
@@ -91,6 +99,26 @@ print.Finemapr <- function(x, ...)
 # Plot methods
 #------------------------
 
+#' @rdname Finemapr
+#' @export
+print.Finemapr <- function(x, ...)
+{
+  cat(" - cmd:", x$cmd, "\n")
+  cat(" - #loci:", x$num_loci, "\n") 
+  
+  ret <- lapply(seq(1, x$num_loci), function(i) {    
+    cat(" - locus:",i, "\n")
+    cat("  -- snp:\n")
+    print(x$snp[[i]], n = 3)
+    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+      100*x$prop_credible, "% credible set", 
+      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+      "\n", sep = "") 
+  })
+
+  return(invisible())
+}  
+  
 #' @rdname Finemapr
 #' @export
 plot.Finemapr <- function(x, ...)
@@ -122,3 +150,26 @@ plot_snp.Finemapr <- function(x, lim_prob = c(0, 1.5),
     xlim(lim_prob) + 
     scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
 }
+
+#------------------------
+# Other methods
+#------------------------
+
+#' @rdname Finemapr
+#' @export
+extract_credible_set.Finemapr <- function(x, ...)
+{
+  lapply(x$snp, function(snp) {
+    snps <- snp %>% filter(snp_prob_cumsum <= x$prop_credible) %$% snp
+    
+    # the case: the single top snps covers 100% of credibility
+    if(length(snps) == 0) {
+      snps <- head(snp, 1) %$% snp
+    }
+    
+    return(snps)
+  })
+}
+
+
+

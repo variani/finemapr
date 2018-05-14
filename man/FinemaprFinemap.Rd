@@ -52,11 +52,11 @@ print.FinemaprFinemap(x, ...)
 \method{plot_ncausal}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1),
   ...)
 
-\method{plot_config}{FinemaprFinemap}(x, lim_prob = c(0, 1.5),
+\method{plot_config}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
   top_rank = getOption("top_rank"), ...)
 
-\method{plot_snp}{FinemaprFinemap}(x, lim_prob = c(0, 1.5),
+\method{plot_snp}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
   top_rank = getOption("top_rank"), ...)
 }

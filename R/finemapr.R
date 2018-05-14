@@ -4,11 +4,13 @@
 #' @examples
 #' ex <- example_finemap()
 #' out <- finemapr(list(ex$tab1, ex$tab2), list(ex$ld1, ex$ld2), list(ex$n1, ex$n2), args = "--n-causal-max 1")
+#' out <- finemapr(list(ex$tab1, ex$tab2), list(ex$ld1, ex$ld2), list(ex$n1, ex$n2), method = "paintor", args = "-enumerate 1")
 #'
 #' @export
 finemapr <- function(tab, ld, n, 
+  annot, annotations, 
   prop_credible = 0.95,
-  method = c("finemap"),
+  method = c("finemap", "paintor"),
   dir_run,
   tool, args = "",
   # finemap par
@@ -24,12 +26,13 @@ finemapr <- function(tab, ld, n,
   missing_tab <- missing(tab)
   missing_ld <- missing(ld)
   missing_n <- missing(n)
-  
+
   missing_prior_k <- missing(prior_k)
   
   if(missing(tool)) {
     tool <-switch(method,
       "finemap" = getOption("finemapr_finemap"),
+      "paintor" = getOption("finemapr_paintor"),
       stop("error in switch"))
   }
   
@@ -44,6 +47,7 @@ finemapr <- function(tab, ld, n,
 
   class_finemapr <- switch(out$method,
     "finemap" = "FinemaprFinemap",
+    "paintor" = "FinemaprPaintor",
     stop("switch error on `method`"))
   oldClass(out) <- c(class_finemapr, "Finemapr", oldClass(out))
 
@@ -58,11 +62,15 @@ finemapr <- function(tab, ld, n,
   stopifnot(!missing_n)
   out <- process_n(out, n)
   
+  if(method == "paintor") { 
+    out <- process_annot(out, annot, annotations)
+  }
+
   ### write files 
   write_files(out)
   
   #### run
-  res <- run_tool(out)
+  out <- run_tool(out)
 
   #### read results
   out <- collect_results(out)

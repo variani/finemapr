@@ -4,8 +4,9 @@
 \alias{finemapr}
 \title{Run FINEMAP.}
 \usage{
-finemapr(tab, ld, n, prop_credible = 0.95, method = c("finemap"), dir_run,
-  tool, args = "", prior_k, save_ld = FALSE, ret = c("results", "zscore"))
+finemapr(tab, ld, n, annot, annotations, prop_credible = 0.95,
+  method = c("finemap", "paintor"), dir_run, tool, args = "", prior_k,
+  save_ld = FALSE, ret = c("results", "zscore"))
 }
 \description{
 Run FINEMAP.
@@ -13,5 +14,6 @@ Run FINEMAP.
 \examples{
 ex <- example_finemap()
 out <- finemapr(list(ex$tab1, ex$tab2), list(ex$ld1, ex$ld2), list(ex$n1, ex$n2), args = "--n-causal-max 1")
+out <- finemapr(ex$tab1, ex$ld1, ex$n1, method = "paintor", args = "-enumerate 1")
 
 }

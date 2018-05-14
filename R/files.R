@@ -1,6 +1,30 @@
-#-----------------
-# File names
-#-----------------
+#--------------------------
+# File names for paintor
+#--------------------------
+
+#' @rdname FinemaprPaintor
+#' @export
+filename_zscore.FinemaprPaintor <- function(x, locus = 1) paste0(locus, ".region") 
+
+#' @rdname FinemaprPaintor
+#' @export
+filename_ld.FinemaprPaintor <- function(x, locus = 1) paste0(locus, ".region.ld")
+
+#' @rdname FinemaprPaintor
+#' @export
+filename_annot.FinemaprPaintor <- function(x, locus = 1) paste0(locus, ".region.annotations")
+
+#' @rdname FinemaprPaintor
+#' @export
+filename_master.FinemaprPaintor <- function(x) "region.master"
+
+#' @rdname FinemaprPaintor
+#' @export
+filename_snp.FinemaprPaintor <- function(x, locus) paste0(locus, ".region.results")
+
+#--------------------------
+# File names for finemap
+#--------------------------
 
 #' @rdname FinemaprFinemap
 #' @export

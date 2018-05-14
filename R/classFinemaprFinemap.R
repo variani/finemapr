@@ -66,8 +66,6 @@ run_tool.FinemaprFinemap <- function(x, ...)
     x$args, " --in-files ", filename_master(x))
   cmd <- paste(x$tool, tool_input)
   
-  print(cmd)
-  
   dir_cur <- getwd()
   setwd(x$dir_run)
   
@@ -78,6 +76,7 @@ run_tool.FinemaprFinemap <- function(x, ...)
   setwd(dir_cur)
 
   ### return
+  x$cmd <- cmd
   x$ret_run <- ret_run
   
   return(x)
@@ -121,14 +120,12 @@ collect_results.FinemaprFinemap <- function(x, ...)
     x$config <- lapply(results, function(x) x$config)
     x$ncausal <- lapply(results, function(x) x$ncausal)
     
-    x$snps_credible <- lapply(x$snp, function(snp) {
-      snp %>% filter(snp_prob_cumsum <= x$prop_credible) %$% snp
-    })
-    
+    x$snps_credible <- extract_credible_set(x)
   }
   
   return(x)
 }
+
 #---------------------
 # Print/plot methods
 #---------------------
