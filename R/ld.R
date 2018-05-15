@@ -4,9 +4,11 @@ ref_ld <- function(chr = 16, start = 53.767e6, end = 53.768e6, mono = FALSE,
   pop = "EUR", snps = NULL,
   measure = c("r2", "r", "D"), tol = 1e-10,
   strict = FALSE,
+  format = c("Matrix", "matrix"),
   verbose = 0)
 {
   measure <- match.arg(measure)
+  format <- match.arg(format)
   
   stopifnot(requireNamespace("gaston"))
     
@@ -17,6 +19,11 @@ ref_ld <- function(chr = 16, start = 53.767e6, end = 53.768e6, mono = FALSE,
   ld <- gaston::LD(bed, c(1, ncol(bed)), measure = measure)
   
   ld[abs(ld) < tol] <- 0
+  
+  ld <- switch(format,
+    "Matrix" = Matrix(ld),
+    "matrix" = ld,
+    stop("error in switch by `format`"))
   
   return(ld)
 }
@@ -45,7 +52,7 @@ ref_bed <- function(chr = 16, start = 53.767e6, end = 53.768e6, mono = FALSE,
   ### url
   url <- paste0("http://tabix.iobio.io/?cmd=-h%20%27",
     "http://bochet.gcc.biostat.washington.edu/beagle/1000_Genomes_phase3_v5a/",
-    "vcf.b37/",
+    "b37.vcf/",
     "chr", chr, ".1kg.phase3.v5a.vcf.gz",
     "%27%20", chr, ":", start, "-", end)
   
@@ -55,6 +62,7 @@ ref_bed <- function(chr = 16, start = 53.767e6, end = 53.768e6, mono = FALSE,
   
   ### download vcf
   vcf <- RCurl::getURL(url)
+  stopifnot(vcf != "")
   
   ### convert from vcf to bed (plink)
   file_tmp <- tempfile()
