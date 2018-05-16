@@ -13,12 +13,20 @@ ref_ld <- function(chr = 16, start = 53.767e6, end = 53.768e6, mono = FALSE,
   stopifnot(requireNamespace("gaston"))
     
   bed <- ref_bed(chr = chr, start = start, end = end, mono = mono,
-  pop = pop, snps = snps,
-  strict = strict, verbose = verbose)
+    pop = pop, snps = snps,
+    strict = strict, verbose = verbose)
 
   ld <- gaston::LD(bed, c(1, ncol(bed)), measure = measure)
   
   ld[abs(ld) < tol] <- 0
+  
+  # order by `snps`
+  if(!is.null(snps)) {
+    snps_ld <- rownames(ld)
+    snps_select <- lapply(snps, function(x) which(snps_ld == x)) %>% unlist
+    
+    ld <- ld[snps_ld, snps_ld]
+  }
   
   ld <- switch(format,
     "Matrix" = Matrix(ld),
