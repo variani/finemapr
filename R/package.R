@@ -15,6 +15,7 @@
 #'
 #' @import Matrix
 #' @import ggplot2
+#' @import ggrepel
 #' @importFrom cowplot plot_grid
 {}
 

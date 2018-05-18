@@ -86,7 +86,7 @@ write_files.FinemaprPaintor <- function(x, ...)
   ### write file of Z-scores
   ret <- lapply(seq_along(x$tab), function(locus) {
     write_delim(
-      x$tab[[locus]] %>% select(snp, zscore), 
+      prepare_zscore_writing(x$tab[[locus]]),
       file.path(x$dir_run, filename_zscore(x, locus)), 
       delim = " ", col_names = TRUE)
   })
@@ -160,9 +160,7 @@ collect_results.FinemaprPaintor <- function(x, ...)
           snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
         select(rank_pp, snp, snp_prob, snp_prob_cumsum, everything())
       
-      snp <- select(x$tab[[locus]], rank_z, snp) %>%
-        left_join(snp, ., by = "snp") %>%
-        select(rank_z, everything())
+      snp <- merge_tab_snp(x$tab[[locus]], snp)
       
       list(
         snp = snp)

@@ -17,7 +17,7 @@ finemapr <- function(tab, ld, n,
   prior_k,
   # other par
   save_ld = FALSE,
-  ret = c("results", "zscore"))
+  ret = c("results", "zscore", "ld"))
 {
   ### arg
   method <- match.arg(method)
@@ -58,7 +58,8 @@ finemapr <- function(tab, ld, n,
   
   stopifnot(!missing_ld)
   out <- process_ld(out, ld)
-  
+  if(ret == "ld") return(out)
+    
   stopifnot(!missing_n)
   out <- process_n(out, n)
   
@@ -162,11 +163,12 @@ process_ld.Finemapr <- function(x, lds, ...)
     
     ind <- snps_ld %in% snps_zscore
     snps_finemap <- snps_ld[ind]
-    snps_ld_missing <- snps_ld[!ind]
+    snps_missing_finemap <- snps_zscore[!(snps_zscore %in% snps_finemap)]
+    snps_missing_ld <- snps_ld[!ind]
     
-    # check the proportion of `snps_ld_missing`
-    prop_snps_missing <- length(snps_ld_missing) / 
-      (length(snps_ld_missing) + length(snps_finemap))
+    # check the proportion of `snps_missing_ld`
+    prop_snps_missing <- length(snps_missing_ld) / 
+      (length(snps_missing_ld) + length(snps_finemap))
     #stopifnot(prop_snps_missing < 0.20)
     
     # subset LD matrix
@@ -177,12 +179,19 @@ process_ld.Finemapr <- function(x, lds, ...)
     diag(ld) <- 1
    
     list(ld = ld, 
-      snps_ld_missing = snps_ld_missing)
+      snps_missing_ld = snps_missing_ld,
+      snps_finemap = snps_finemap,
+      snps_missing_finemap = snps_missing_finemap)
   })
   
   x$ld <- lapply(out_lds, function(x) x$ld)
-  x$snps_ld_missing <- lapply(out_lds, function(x) x$snps_ld_missing)  
-  x$snps_finemap <- lapply(out_lds, function(x) colnames(x$ld))
+  x$snps_missing_ld <- lapply(out_lds, function(x) x$snps_missing_ld)  
+  x$snps_finemap <- lapply(out_lds, function(x) x$snps_finemap)
+  x$snps_missing_finemap <- lapply(out_lds, function(x) x$snps_missing_finemap)
+    
+  for(i in seq(1, x$num_loci)) {
+    x$tab[[i]] <- mutate(x$tab[[i]], finemap = snp %in% x$snps_finemap[[1]])
+  }
   
   return(x)
 }

@@ -20,7 +20,7 @@ write_files.FinemaprFinemap <- function(x, ...)
   ### write file of Z-scores
   ret <- lapply(seq_along(x$tab), function(locus) {
     write_delim(
-      x$tab[[locus]] %>% select(snp, zscore), 
+      prepare_zscore_writing(x$tab[[locus]]),
       file.path(x$dir_run, filename_zscore(x, locus)), 
       delim = " ", col_names = FALSE)
   })
@@ -99,9 +99,7 @@ collect_results.FinemaprFinemap <- function(x, ...)
           snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
         select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf)
       
-      snp <- select(x$tab[[locus]], rank_z, snp) %>%
-        left_join(snp, ., by = "snp") %>%
-        select(rank_z, everything())
+      snp <- merge_tab_snp(x$tab[[locus]], snp)
       
       list(
         log = log,
@@ -139,6 +137,9 @@ print.FinemaprFinemap <- function(x, ...)
   ret <- lapply(seq(1, x$num_loci), function(i) {    
     cat(" - locus:",i, "\n")
     cat("  -- config:\n")
+    cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
+      " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
+      " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
     print(x$config[[i]], n = 3)
     cat("  -- snp:\n")
     print(x$snp[[i]], n = 3)

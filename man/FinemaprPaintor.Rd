@@ -4,10 +4,14 @@
 \alias{filename_zscore.FinemaprPaintor}
 \alias{filename_ld.FinemaprPaintor}
 \alias{filename_annot.FinemaprPaintor}
+\alias{filename_master.FinemaprPaintor}
+\alias{filename_snp.FinemaprPaintor}
 \alias{FinemaprPaintor}
 \alias{print.FinemaprPaintor}
 \alias{process_annot.FinemaprPaintor}
 \alias{write_files.FinemaprPaintor}
+\alias{run_tool.FinemaprPaintor}
+\alias{collect_results.FinemaprPaintor}
 \title{S3 class FinemaprPaintor.}
 \usage{
 \method{filename_zscore}{FinemaprPaintor}(x, locus = 1)
@@ -16,11 +20,19 @@
 
 \method{filename_annot}{FinemaprPaintor}(x, locus = 1)
 
+\method{filename_master}{FinemaprPaintor}(x)
+
+\method{filename_snp}{FinemaprPaintor}(x, locus)
+
 print.FinemaprPaintor(x, ...)
 
 \method{process_annot}{FinemaprPaintor}(x, annots, annotations, ...)
 
 \method{write_files}{FinemaprPaintor}(x, ...)
+
+\method{run_tool}{FinemaprPaintor}(x, ...)
+
+\method{collect_results}{FinemaprPaintor}(x, ...)
 }
 \description{
 S3 class FinemaprPaintor.
