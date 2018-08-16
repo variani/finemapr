@@ -14,7 +14,9 @@ plot_zscore.Finemapr <- function(x, locus = 1,
   selected,
   # ggrepel
   force = 20,
-  color_main = "grey40", color_selected = "aquamarine4", color_credible = "dodgerblue4", color_missing = "brown",
+  color_main = "grey75", color_selected = "aquamarine4", 
+  color_credible = "dodgerblue4", color_missing = "brown",
+  plot_missing = FALSE,
   ...)
 {
   ### arg
@@ -53,7 +55,7 @@ plot_zscore.Finemapr <- function(x, locus = 1,
       geom_point(
         data = tab_credible, aes(pos, -log10(pval)), color = color_credible) 
     
-    tab_credible_top <- filter(tab, snp %in% head(credible, 3))
+    tab_credible_top <- filter(tab, snp %in% head(credible, 10))
     p <- p + 
       geom_text_repel(
         data = tab_credible_top, aes(label = snp),
@@ -61,7 +63,7 @@ plot_zscore.Finemapr <- function(x, locus = 1,
   }
 
   ### missing snps 
-  if(!is.null(x$snps_missing_finemap)) {
+  if(!is.null(x$snps_missing_finemap) & plot_missing) {
     snps_missing <- x$snps_missing_finemap[[locus]]
     
     tab_missing <- filter(tab, snp %in% snps_missing)
@@ -77,6 +79,14 @@ plot_zscore.Finemapr <- function(x, locus = 1,
         data = tab_missing_top, aes(label = snp),
         force = force, size = label_size, color = color_missing)
   }
+  
+  ### labs
+  p <- p + 
+    scale_x_continuous(labels = scales::comma) +
+    labs(x = "Position (bp)", y = expression(-log[10](P)))
+  
+  ### cleaner theme
+  p <- p + theme(panel.grid.minor = element_blank())
   
   return(p)    
 }
