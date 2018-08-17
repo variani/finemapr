@@ -160,12 +160,13 @@ plot_snp.Finemapr <- function(x, lim_prob = c(0, 1.5),
 extract_credible_set.Finemapr <- function(x, ...)
 {
   lapply(x$snp, function(snp) {
-    snps <- snp %>% filter(snp_prob_cumsum <= x$prop_credible) %$% snp
+    snp_below <- snp %>% filter(snp_prob_cumsum <= x$prop_credible)
+    snps <- head(snp, nrow(snp_below) + 1) %$% snp
     
     # the case: the single top snps covers 100% of credibility
-    if(length(snps) == 0) {
-      snps <- head(snp, 1) %$% snp
-    }
+    #if(length(snps) == 0) {
+    #  snps <- head(snp, 1) %$% snp
+    #}
     
     return(snps)
   })

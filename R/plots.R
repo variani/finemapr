@@ -26,7 +26,11 @@ plot_zscore.Finemapr <- function(x, locus = 1,
   tab <- x$tab[[locus]]
   tab <- mutate(tab,
     pval = pchisq(zscore^2, df = 1, lower.tail = FALSE))
-      
+  
+  if(!plot_missing) {
+    tab <- filter(tab, finemap)
+  }
+  
   p <- ggplot(tab, aes(pos, -log10(pval))) + geom_point(color = color_main)
   
   ### sel snps
