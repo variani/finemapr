@@ -35,7 +35,9 @@ load_all("~/git/variani/finemapr/")
 ```{r local}
 # This function calculates BFDP, the approximate Pr( H0 | thetahat )
 #
-# @href http://faculty.washington.edu/jonno/BFDP.R
+# http://faculty.washington.edu/jonno/BFDP.R
+#
+# doi.org/10.1086/519024, p. 120, formula (6) and above
 #
 # @param thetahat an estiamte of the log relative risk
 # @param V the variance of this estimate
@@ -54,6 +56,9 @@ BFDPfunV <- function(thetahat, V, W, pi1)
   list(BF = BF, pH0 = pH0, pH1 = pH1, BFDP = BFDP)
 }
 
+# This function computes ABF according to Wakefield (doi.org/10.1086/519024)
+#
+# doi.org/10.1038/ng.2435, Online Methods, Section Bayesian approach
 ABFfun <- function(Z, V, W)
 {
   r <- W / (V + W)
