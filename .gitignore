@@ -6,6 +6,8 @@ run_*/
 # rmd
 *\.html
 *_cache/
+figures/
+
 inst/doc
 
 # vignettes/

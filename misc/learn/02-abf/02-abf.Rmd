@@ -1,0 +1,148 @@
+---
+title: "Fine-mapping using Approximate Bayes Factor (ABF) on toy example"
+author: "Andrey Ziyatdinov"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: united
+    toc: true
+    number_sections: false
+    keep_md: true
+---
+
+```{r options, echo = F}
+opts_chunk$set(dpi = 92,
+  fig.path = "figures/", comment = NA, results = 'markup', tidy = F, message = F, warning = F, echo = T, cache = F)
+```
+
+# About
+
+Load libraries:
+
+```{r inc, cache = FALSE, echo = T}
+library(magrittr)
+library(dplyr)  
+
+library(ggplot2)
+theme_set(theme_minimal())
+
+library(devtools)
+load_all("~/git/variani/finemapr/")
+```
+
+# Wakefield's functions
+
+```{r local}
+# This function calculates BFDP, the approximate Pr( H0 | thetahat )
+#
+# @href http://faculty.washington.edu/jonno/BFDP.R
+#
+# @param thetahat an estiamte of the log relative risk
+# @param V the variance of this estimate
+# @param W the prior variance
+# @param pi1 the prior probability of a non-null association
+BFDPfunV <- function(thetahat, V, W, pi1)
+{
+  pH0 <- dnorm(thetahat, m = 0, s = sqrt(V))
+  postvar <- V + W
+  pH1 <- dnorm(thetahat, m = 0, s = sqrt(postvar))
+  BF <- pH0/pH1
+  
+  PO <- (1-pi1) / pi1
+  BFDP <- BF * PO / (BF*PO + 1)
+  
+  list(BF = BF, pH0 = pH0, pH1 = pH1, BFDP = BFDP)
+}
+
+ABFfun <- function(Z, V, W)
+{
+  r <- W / (V + W)
+  
+  (1 / sqrt(1 - r)) * exp(-Z*Z*r/2)
+}
+```
+
+# Example data set
+
+```{r ex}
+ex <- example_finemap()
+
+ss <- ex$tab1
+ld <- ex$ld1 # not needed for ABF, be used later on for FINEMAP
+N <- 4444
+
+# simulate standard errors (se) and add effect sizes (effect)
+set.seed(1)
+ss <- mutate(ss,
+  se = rnorm(n(), 1/sqrt(N), 0.005),
+  effect = zscore * se)
+
+# remove strong signals
+ss <- filter(ss, abs(zscore) < 6)
+
+# sort
+ss <- arrange(ss, -abs(zscore)) %>%
+  mutate(rank = seq(1, n())) %>% select(rank, everything())
+```
+
+# ABF
+
+```{r abf}
+W <- 0.21^2 # suggested by Wakefield
+pi1 <- 1 / nrow(ss) # prior on alternative (association)
+
+abf <- BFDPfunV(ss$effect, ss$se^2, W, pi1) %>% bind_cols
+
+abf <- bind_cols(ss, abf)
+
+abf <- mutate(abf, 
+  ABF = ABFfun(zscore, se^2, W),
+  ABFinv = (1 / ABF))
+abf <- within(abf, sumABFinv <- sum(ABFinv))
+
+abf <- mutate(abf, P1_ABF = ABFinv / sumABFinv)
+```
+
+Top 5 SNPs:
+
+```{r top5}
+head(abf, 5) %>% 
+  select(rank, snp, zscore, BF, ABF, ABFinv, P1_ABF) %>%
+  pander
+```
+
+# FINEMAP
+
+```{r finemap}
+finemap <- finemapr(ss, ld, n = as.integer(1/0.015^2), 
+  tool = "finemap", args = "--n-causal-max 1")
+```
+
+Top 5 SNPs:
+
+```{r top5_finemap}
+head(finemap$snp[[1]], 5) %>% 
+  pander
+```
+
+# Final plot: ABF vs. FINEMAP
+
+```{r final_plot}
+# join results from two methods
+tab <- full_join(
+    select(finemap$snp[[1]], rank_z, snp, snp_prob) %>% rename(post_finemap = snp_prob),  
+    select(abf, snp, P1_ABF) %>% rename(post_abf = P1_ABF),
+    by = "snp") %>%
+  head(9)
+
+# table for plot
+ptab <- gather(tab, method, post_prob, -rank_z, -snp) %>%
+  mutate(
+    snp_rank_z = paste0("#", rank_z, "\n", snp),
+    method = factor(method, labels = c("ABF (Wakefield)", "FINEMAP (Benner)")))
+  
+# plot
+ggplot(ptab, aes(factor(snp_rank_z), post_prob, fill = method)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "SNP", y = "Posterior probability")
+```
