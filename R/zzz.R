@@ -1,4 +1,4 @@
-finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor"))
+finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor", "cojo"))
 {
   tool <- match.arg(tool)
   
@@ -6,6 +6,7 @@ finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor"))
     "finemap" = "finemap",
     "caviar" = "caviar",
     "paintor" = "paintor",
+    "cojo" = "gcta",
     stop())
   
   path_apps <- file.path("~/apps/", tool)
@@ -25,6 +26,7 @@ finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor"))
     finemapr_finemap = finemapr_guess_tool("finemap"),
     finemapr_caviar = finemapr_guess_tool("caviar"),
     finemapr_paintor = finemapr_guess_tool("paintor"),
+    finemapr_cojo = finemapr_guess_tool("cojo"),
     # plot
     finemapr_label_size = 4,
     top_rank = 5,
