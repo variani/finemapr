@@ -23,7 +23,7 @@ cojo <- function(tab, bed,
   ### process input data: `tab`
   names_tab <- c("SNP", "A1", "A2", "freq", "b", "se", "p", "N")
   
-  tab <- switch(class(tab),
+  tab <- switch(class(tab)[1],
     "character" = read_tsv(tab),
     as_data_frame(tab))
   stopifnot(ncol(tab) == length(names_tab))
