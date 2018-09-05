@@ -9,7 +9,6 @@
 #' @export
 cojo <- function(tab, bed, 
   method = c("select"),
-  p = 5e-8,
   dir_run = "run_cojo",
   tool = getOption("finemapr_cojo"), args = "")
 {
@@ -39,7 +38,7 @@ cojo <- function(tab, bed,
 
   ### run tool
   tool_input <- paste0(args, " --bfile ", bed, " --cojo-file region.ma",
-    " --out region", " --cojo-p ", p)
+    " --out region")
   
   if(method == "select") {
     tool_input <- paste0(tool_input, " --cojo-slct")
@@ -57,11 +56,27 @@ cojo <- function(tab, bed,
   setwd(dir_cur)
   
   ### read results
-  jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv
   log <- file.path(dir_run, "region.log") %>% read_lines
   badsnps <- file.path(dir_run, "region.freq.badsnps") %>% read_tsv
   
-  snps_index <- jma$SNP
+  jma <- snps_index <- NULL
+  if(method == "select") {
+    jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv
+    snps_index <- jma$SNP
+  }
+  
+  ### return
+  out <- list(cmd = cmd, ret = ret_run, 
+    tab = tab,
+    jma = jma, log = log, badsnps = badsnps,
+    snps = snps, snps_index = snps_index)
+  
+  oldClass(out) <- c("Cojo", oldClass(out))
+  
+  return(out) 
+  
+  
+  stop()
   
   ### run conditional analysis for each index snps (snps_index)
   cond <- lapply(seq_along(snps_index), function(i) {
