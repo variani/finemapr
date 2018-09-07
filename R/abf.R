@@ -5,7 +5,7 @@
 #' effect <- ex$tab1$zscore * se
 #' out <- abf(effect, se)
 #' @export
-abf <- function(effect, se)
+abf <- function(effect, se, snp = paste0("snp", seq(1, nrow(effect))))
 {
   # copmute ABF
   W <- 0.21^2 # suggested by Wakefield
@@ -14,7 +14,7 @@ abf <- function(effect, se)
   tab <- BFDPfunV(effect, se^2, W, pi1) %>% bind_cols
 
   ### add input to `tab`
-  ss <- data_frame(effect = effect, se = se) %>%
+  ss <- data_frame(snp = snp, effect = effect, se = se) %>%
     mutate(zscore = effect / se)
   
   tab <- bind_cols(ss, tab)
@@ -29,6 +29,9 @@ abf <- function(effect, se)
 
   # sort by `P1_ABF`
   tab <- arrange(tab, desc(P1_ABF))
+  
+  # add cumsum
+  tab <- mutate(tab, snp_prob_cumsum = cumsum(P1_ABF))
   
   return(tab)
 }

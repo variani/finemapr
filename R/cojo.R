@@ -8,7 +8,8 @@
 #' 
 #' @export
 cojo <- function(tab, bed, 
-  method = c("select"),
+  method = c("select", "cond"),
+  snps_cond = NULL,
   dir_run = "run_cojo",
   tool = getOption("finemapr_cojo"), args = "")
 {
@@ -42,6 +43,11 @@ cojo <- function(tab, bed,
   
   if(method == "select") {
     tool_input <- paste0(tool_input, " --cojo-slct")
+  } else if(method == "cond") {
+    stopifnot(!is.null(snps_cond))
+    write_lines(snps_cond, file.path(dir_run, "cond.snplist"))
+    
+    tool_input <- paste0(tool_input, " --cojo-cond cond.snplist")
   }
   
   cmd <- paste0(tool, tool_input)
@@ -59,75 +65,64 @@ cojo <- function(tab, bed,
   log <- file.path(dir_run, "region.log") %>% read_lines
   badsnps <- file.path(dir_run, "region.freq.badsnps") %>% read_tsv
   
-  jma <- snps_index <- NULL
+  jma <- snps_index <- cma <- NULL
   if(method == "select") {
     jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv
     snps_index <- jma$SNP
-  }
+  } else if(method == "cond") {
+    cma <- read_tsv(file.path(dir_run, "region.cma.cojo"))
+  }   
   
   ### return
   out <- list(cmd = cmd, ret = ret_run, 
     tab = tab,
+    # select
     jma = jma, log = log, badsnps = badsnps,
-    snps = snps, snps_index = snps_index)
+    snps = snps, snps_index = snps_index,
+    # cond
+    snps_cond = snps_cond, cma = cmd)
   
   oldClass(out) <- c("Cojo", oldClass(out))
   
   return(out) 
+}
+
+#' @export
+run_cojo <- function(tab, bed,
+  args = "", args2 = "", ...)
+{
+  # step 1: select index snps
+  cojo_select <- cojo(tab, bed,  method = "select", args = args, ...)
   
+  snps_index <- cojo_select$snps_index
   
-  stop()
-  
-  ### run conditional analysis for each index snps (snps_index)
+  ### step 2: conditional analysis for each index snps (`snps_index`)
   cond <- lapply(seq_along(snps_index), function(i) {
     snp_i <- snps_index[i]
     snps_cond <- snps_index[-i]
-    out_i <- paste0("region_", i)
-    snplist_i <- paste0("cond.snplist_", i)
     
-    write_lines(snps_cond, file.path(dir_run, snplist_i ))
+    if(length(snps_cond)) {
+      stop("not implemented")
+    } else {
+      cma <- cojo_select$tab
+    }
     
-    tool_input <- paste0(args, " --bfile ", bed, " --cojo-file region.ma",
-      paste0(" --out ", out_i), paste0(" --cojo-cond ", snplist_i)) #--cojo-collinear 0.99")
-  
-    cmd <- paste0(tool, tool_input)
-  
-    dir_cur <- getwd()
-    setwd(dir_run)
-  
-    ret_run <- try({
-      system(cmd, input = tool_input)
-    })
+    # abf
+    abf <- abf(cma$b, cma$se, cma$SNP)
     
-    setwd(dir_cur)
+    snp_below <- abf %>% filter(snp_prob_cumsum <= 0.95)
+    snps_credible <- head(abf, nrow(snp_below) + 1) %$% snp
     
     # read results
     list(
       snp_index = snp_i, snps_cond = snps_cond,
-      cma = read_tsv(file.path(dir_run, paste0(out_i, ".cma.cojo"))))
+      cma = cma, abf = abf, snps_credible = snps_credible)
   })
 
-  ### compute credible set using ABF/FINEMAP 1
-  cond <- lapply(cond, function(x) {
-    tab <- x$cma
-    tab <- mutate(tab, zscore = bC/bC_se)
-   
-    ld <- simulate_ld_diag(tab$SNP) 
-    fm <- finemapr(tab, ld, round(mean(tab$n), 0), args = "--n-causal-max 1")
-    
-    #c(x, list(bf = fm$snp[[1]], snps_credible = fm$snps_credible[[1]]))
-    c(x, list(fm = fm))
-  })
-    
   ### return
-  out <- list(cmd = cmd, ret = ret_run, 
-    tab = tab,
-    jma = jma, log = log, badsnps = badsnps,
-    snps = snps, snps_index = snps_index,
-    cond = cond)
-  
-  oldClass(out) <- c("Cojo", oldClass(out))
-  
+  out <- cojo_select
+  out$cond <- cond
+ 
   return(out) 
 }
 
