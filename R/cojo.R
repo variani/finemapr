@@ -24,7 +24,7 @@ cojo <- function(tab, bed,
   names_tab <- c("SNP", "A1", "A2", "freq", "b", "se", "p", "N")
   
   tab <- switch(class(tab)[1],
-    "character" = read_tsv(tab),
+    "character" = read_tsv(tab, col_types = "cccnnnnn"),
     as_data_frame(tab))
   stopifnot(ncol(tab) == length(names_tab))
   stopifnot(all(names(tab) == names_tab))
@@ -63,11 +63,12 @@ cojo <- function(tab, bed,
   
   ### read results
   log <- file.path(dir_run, "region.log") %>% read_lines
-  badsnps <- file.path(dir_run, "region.freq.badsnps") %>% read_tsv
-  
+  badsnps <- file.path(dir_run, "region.badsnps") %>% read_tsv(col_types = "cccc")
+  badfreqs <- file.path(dir_run, "region.freq.badsnps") %>% read_tsv(col_types = "ccccnn")
+    
   jma <- snps_index <- cma <- NULL
   if(method == "select") {
-    jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv
+    jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv(col_types = "ccncnnnnnnnnnn")
     snps_index <- jma$SNP
   } else if(method == "cond") {
     cma <- read_tsv(file.path(dir_run, "region.cma.cojo"))
@@ -77,7 +78,7 @@ cojo <- function(tab, bed,
   out <- list(cmd = cmd, ret = ret_run, 
     tab = tab,
     # select
-    jma = jma, log = log, badsnps = badsnps,
+    jma = jma, log = log, badsnps = badsnps, badfreqs = badfreqs,
     snps = snps, snps_index = snps_index,
     # cond
     snps_cond = snps_cond, cma = cmd)
