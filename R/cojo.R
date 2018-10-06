@@ -20,6 +20,8 @@ cojo <- function(tab, bed,
   bed <- normalizePath(bed)
   bed <- gsub(".bed$", "", bed)
   
+  is_temp_dir <- missing(dir_run)
+  
   ### process input data: `tab`
   names_tab <- c("SNP", "A1", "A2", "freq", "b", "se", "p", "N")
   
@@ -32,6 +34,10 @@ cojo <- function(tab, bed,
   snps <- tab$SNP
 
   ### create `dir`
+  if(is_temp_dir) {
+    dir_run <- tempfile(pattern = "run_cojo")
+  }
+
   ret_dir_create <- dir.create(dir_run, showWarnings = FALSE, recursive = TRUE, mode = "777")
   
   ### write files
@@ -63,8 +69,18 @@ cojo <- function(tab, bed,
   
   ### read results
   log <- file.path(dir_run, "region.log") %>% read_lines
-  badsnps <- file.path(dir_run, "region.badsnps") %>% read_tsv(col_types = "cccc")
-  badfreqs <- file.path(dir_run, "region.freq.badsnps") %>% read_tsv(col_types = "ccccnn")
+  
+  file_badsnps <- file.path(dir_run, "region.badsnps") 
+  badsnps <- NULL
+  if(file.exists(file_badsnps)) {
+    badsnps <- read_tsv(file_badsnps, col_types = "cccc")
+  }
+    
+  file_badfreqs <- file.path(dir_run, "region.freq.badsnps")
+  badfreqs <- NULL
+  if(file.exists(file_badfreqs)) {
+    badfreqs <- read_tsv(file_badfreqs, col_types = "ccccnn")
+  }
     
   jma <- snps_index <- cma <- NULL
   if(method == "select") {
@@ -73,6 +89,11 @@ cojo <- function(tab, bed,
   } else if(method == "cond") {
     cma <- read_tsv(file.path(dir_run, "region.cma.cojo"))
   }   
+  
+  ### clean
+  if(is_temp_dir) {
+    unlink(dir_run, recursive = TRUE)
+  }
   
   ### return
   out <- list(cmd = cmd, ret = ret_run, 
