@@ -8,7 +8,7 @@
 #' 
 #' @export
 cojo <- function(tab, bed, 
-  method = c("select", "cond"),
+  method = c("select", "cond"), cmd = "",
   snps_cond = NULL,
   dir_run = "run_cojo",
   tool = getOption("finemapr_cojo"), args = "")
@@ -46,16 +46,20 @@ cojo <- function(tab, bed,
   ### run tool
   tool_input <- paste0(args, " --bfile ", bed, " --cojo-file region.ma",
     " --out region")
-  
-  if(method == "select") {
-    tool_input <- paste0(tool_input, " --cojo-slct")
-  } else if(method == "cond") {
-    stopifnot(!is.null(snps_cond))
-    write_lines(snps_cond, file.path(dir_run, "cond.snplist"))
+
+  if(cmd != "") {
+    tool_input <- paste0(tool_input, " ", cmd)
+  } else {
+    if(method == "select") {
+      tool_input <- paste0(tool_input, " --cojo-slct")
+    } else if(method == "cond") {
+      stopifnot(!is.null(snps_cond))
+      write_lines(snps_cond, file.path(dir_run, "cond.snplist"))
     
-    tool_input <- paste0(tool_input, " --cojo-cond cond.snplist")
+      tool_input <- paste0(tool_input, " --cojo-cond cond.snplist")
+    }
   }
-  
+    
   cmd <- paste0(tool, tool_input)
   
   dir_cur <- getwd()
@@ -84,7 +88,7 @@ cojo <- function(tab, bed,
     
   jma <- snps_index <- cma <- NULL
   if(method == "select") {
-    jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv(col_types = "ccncnnnnnnnnnn")
+    jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv(col_types = "ccncdddddddddd")
     snps_index <- jma$SNP
   } else if(method == "cond") {
     cma <- read_tsv(file.path(dir_run, "region.cma.cojo"))
@@ -102,7 +106,7 @@ cojo <- function(tab, bed,
     jma = jma, log = log, badsnps = badsnps, badfreqs = badfreqs,
     snps = snps, snps_index = snps_index,
     # cond
-    snps_cond = snps_cond, cma = cmd)
+    snps_cond = snps_cond, cma = cma)
   
   oldClass(out) <- c("Cojo", oldClass(out))
   
@@ -116,7 +120,7 @@ run_cojo <- function(tab, bed,
   # step 1: select index snps
   cojo_select <- cojo(tab, bed,  method = "select", args = args, ...)
   
-  snps_index <- cojo_select$snps_index
+  snps_index <- rev(cojo_select$snps_index) # the last snp is the most signif.
   
   ### step 2: conditional analysis for each index snps (`snps_index`)
   cond <- lapply(seq_along(snps_index), function(i) {
