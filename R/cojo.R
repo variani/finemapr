@@ -88,8 +88,14 @@ cojo <- function(tab, bed,
     
   jma <- snps_index <- cma <- NULL
   if(method == "select") {
-    jma <- file.path(dir_run, "region.jma.cojo") %>% read_tsv(col_types = "ccncdddddddddd")
-    snps_index <- jma$SNP
+    file_jma <- file.path(dir_run, "region.jma.cojo")
+    if(file.exists(file_jma)) {
+      jma <- read_tsv(file_jma, col_types = "ccncdddddddddd")
+      snps_index <- rev(jma$SNP) # the last snp is the most signif.
+    } else { # COJO hasn't selected any snp
+      jma <- data_frame()
+      snps_index <- character()      
+    }
   } else if(method == "cond") {
     cma <- read_tsv(file.path(dir_run, "region.cma.cojo"))
   }   
@@ -120,7 +126,7 @@ run_cojo <- function(tab, bed,
   # step 1: select index snps
   cojo_select <- cojo(tab, bed,  method = "select", args = args, ...)
   
-  snps_index <- rev(cojo_select$snps_index) # the last snp is the most signif.
+  snps_index <- cojo_select$snps_index
   
   ### step 2: conditional analysis for each index snps (`snps_index`)
   cond <- lapply(seq_along(snps_index), function(i) {
@@ -128,14 +134,15 @@ run_cojo <- function(tab, bed,
     snps_cond <- snps_index[-i]
     
     if(length(snps_cond)) {
-      stop("not implemented")
+      cojo_cond <- cojo(tab, bed, method = "cond", args = args2, snps_cond = snps_cond, ...)
+      cma <- cojo_cond$cma
     } else {
-      cma <- cojo_select$tab
+      cma <- cojo_select$tab      
     }
-    
+
     # abf
-    abf <- abf(cma$b, cma$se, cma$SNP)
-    
+    abf <- with(cma, abf(b, se, SNP))
+  
     snp_below <- abf %>% filter(snp_prob_cumsum <= 0.95)
     snps_credible <- head(abf, nrow(snp_below) + 1) %$% snp
     
