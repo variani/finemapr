@@ -4,7 +4,7 @@ finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor", "cojo")
   
   tool_bin <- switch(tool,
     "finemap" = "finemap",
-    "caviar" = "caviar",
+    "caviar" = "CAVIAR",
     "paintor" = "paintor",
     "cojo" = "gcta",
     stop())

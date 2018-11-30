@@ -143,7 +143,7 @@ run_cojo <- function(tab, bed,
     # abf
     abf <- with(cma, abf(b, se, SNP))
   
-    snp_below <- abf %>% filter(snp_prob_cumsum <= 0.95)
+    snp_below <- abf %>% filter(snp_prob_cumsum <= 0.99)
     snps_credible <- head(abf, nrow(snp_below) + 1) %$% snp
     
     # read results
@@ -151,7 +151,8 @@ run_cojo <- function(tab, bed,
       snp_index = snp_i, snps_cond = snps_cond,
       cma = cma, abf = abf, snps_credible = snps_credible)
   })
-
+  names(cond) <- snps_index
+  
   ### return
   out <- cojo_select
   out$cond <- cond
