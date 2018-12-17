@@ -44,7 +44,7 @@ cojo <- function(tab, bed,
   write_tsv(tab, file.path(dir_run, "region.ma"))
 
   ### run tool
-  tool_input <- paste0(args, " --bfile ", bed, " --cojo-file region.ma",
+  tool_input <- paste0(" ", args, " --bfile ", bed, " --cojo-file region.ma",
     " --out region")
 
   if(cmd != "") {
