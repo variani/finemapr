@@ -34,15 +34,16 @@ write_files.FinemaprFinemap <- function(x, ...)
 
   ### write master file
   lines_master <- c(
-    paste0("z;ld;snp;config",
+    paste0("z;ld;snp;config;cred",
       ifelse(is.null(x$prior_k), "", ";k"),
-      ";log;n-ind"),
+      ";log;n_samples"),
     sapply(seq(1, x$num_loci), function(locus) {
       paste0(
         filename_zscore(x, locus), ";", 
         filename_ld(x, locus), ";",
         filename_snp(x, locus), ";",
         filename_config(x, locus), ";",
+        filename_cred(x, locus), ";",
         ifelse(is.null(x$prior_k), "", paste0(filename_k(x, locus), ";")),
         filename_log(x, locus), ";",
         x$n[[locus]])
