@@ -23,7 +23,7 @@ run_finemap <- function(tab, ld, n,
   tab <- as_data_frame(tab)
   stopifnot(ncol(tab) >= 2)
 
-  # modify to work with finemap, based on eQTLs
+  # modified names, renamed "snp" to "rsid" but this does not fix error
   names(tab)[1:8] <- c("rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se")
  
   tab <- filter(tab, !is.na(zscore)) # exclude missing Z-scores
@@ -42,17 +42,16 @@ run_finemap <- function(tab, ld, n,
   #stopifnot(ret_dir_create)
   
   ### write files
+  # write with 8 columns, not 2 
   write_delim(tab[, 1:8], file.path(dir_run, "region.z"),
-  #write_delim(tab[, 1:2], file.path(dir_run, "region.z"), 
     delim = " ", col_names = FALSE)
   write.table(ld, file.path(dir_run, "region.ld"), 
     sep = " ", row.names = FALSE, col.names = FALSE)
 
+  # added cred and changed n-ind to n_samples
   lines_master <- c("z;ld;snp;config;cred;log;n_samples",
     paste0("region.z;region.ld;region.snp;region.config;region.cred;region.log;", num_ind))
   write_lines(lines_master, file.path(dir_run, "region.master"))
-
-  #print("created region.master")
   
   ### run tool
   tool_input <- paste0("--sss --log ", args, " --in-files region.master") 
@@ -85,8 +84,6 @@ run_finemap <- function(tab, ld, n,
   # read output tables
   snp <- read_delim(file.path(dir_run, "region.snp"), delim = " ")
   config <- read_delim(file.path(dir_run, "region.config"), delim = " ")
-
-  #print("read output tables snp and config")
 
   # extract output tables
   ncausal <- finemap_extract_ncausal(log)
