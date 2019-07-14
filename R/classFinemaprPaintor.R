@@ -17,7 +17,7 @@ print.FinemaprPaintor <- function(x, ...)
   ret <- lapply(seq(1, x$num_loci), function(i) {    
     cat(" - locus:",i, "\n")
     cat("  -- snp:\n")
-    print(x$snp[[i]], n = 3)
+    print(x$snp[[2]][i])
     cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
       100*x$prop_credible, "% credible set", 
       ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
@@ -150,8 +150,8 @@ collect_results.FinemaprPaintor <- function(x, ...)
       
       snp <- file.path(x$dir_run, filename_snp(x, locus)) %>%
           read_delim(, delim = " ", col_types = cols())
-      stopifnot(ncol(snp) == 3)
-      names(snp) <- c("snp", "zscore", "snp_prob")
+      stopifnot(ncol(snp) == 4)
+      names(snp) <- c("rank", "snp", "zscore", "snp_prob")
       
       snp <- select(snp, snp, snp_prob) %>% 
         arrange(-snp_prob) %>%

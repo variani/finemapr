@@ -18,9 +18,9 @@ write_files.FinemaprFinemap <- function(x, ...)
   #stopifnot(ret_dir_create)
 
   ### write file of Z-scores
-  ret <- lapply(seq_along(x$tab), function(locus) {
+  ret <- lapply(seq_along(x$tab)[[1]], function(locus) {
     write_delim(
-      prepare_zscore_writing(x$tab[[locus]]),
+      prepare_zscore_writing(x$tab[[2]]), # zscore
       file.path(x$dir_run, filename_zscore(x, locus)), 
       delim = " ", col_names = FALSE)
   })
@@ -34,16 +34,15 @@ write_files.FinemaprFinemap <- function(x, ...)
 
   ### write master file
   lines_master <- c(
-    paste0("z;ld;snp;config;cred",
+    paste0("z;ld;snp;config",
       ifelse(is.null(x$prior_k), "", ";k"),
-      ";log;n_samples"),
+      ";log;n-ind"),
     sapply(seq(1, x$num_loci), function(locus) {
       paste0(
         filename_zscore(x, locus), ";", 
         filename_ld(x, locus), ";",
         filename_snp(x, locus), ";",
         filename_config(x, locus), ";",
-        filename_cred(x, locus), ";",
         ifelse(is.null(x$prior_k), "", paste0(filename_k(x, locus), ";")),
         filename_log(x, locus), ";",
         x$n[[locus]])
@@ -89,18 +88,18 @@ collect_results.FinemaprFinemap <- function(x, ...)
 {
   results <- try({
     lapply(seq(1, x$num_loci), function(locus) {
-      log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      log <- x$log #read_lines(file.path(x$dir_run, filename_log(x, locus)))
       
-      snp <- file.path(x$dir_run, filename_snp(x, locus)) %>%
-          read_delim(, delim = " ", col_types = cols())
+      snp <- x$snp#file.path(x$dir_run, filename_snp(x, locus)) %>%
+          #read_delim(, delim = " ", col_types = cols())
       
-      snp <- arrange(snp, -snp_prob) %>%
+      snp <- arrange(data.table(snp), as.numeric(-snp_prob)) %>%
         mutate(
           rank_pp = seq(1, n()),
           snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
-        select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf)
+        select(rank_pp, snp$snp, snp_prob, snp_log10bf) #snp_prob_cumsum, snp_log10bf)
       
-      snp <- merge_tab_snp(x$tab[[locus]], snp)
+      snp <- merge_tab_snp(x$tab[[1]][locus], snp)
       
       list(
         log = log,
@@ -135,22 +134,22 @@ print.FinemaprFinemap <- function(x, ...)
 {
   cat(" - tables of results: `config`, `snp`, `ncausal`\n")
   
-  ret <- lapply(seq(1, x$num_loci), function(i) {    
-    cat(" - locus:",i, "\n")
-    cat("  -- config:\n")
-    cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
-      " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
-      " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
-    print(x$config[[i]], n = 3)
-    cat("  -- snp:\n")
-    print(x$snp[[i]], n = 3)
-    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
-      100*x$prop_credible, "% credible set", 
-      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
-      "\n", sep = "") 
-  })
+  # ret <- lapply(seq(1, x$num_loci), function(i) {    
+  #   cat(" - locus:",i, "\n")
+  #   cat("  -- config:\n")
+  #   cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
+  #     " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
+  #     " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
+  #   print(x$config, n = 3)
+  #   cat("  -- snp:\n")
+  #   print(x$snp[[2]][i])
+  #   cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+  #     100*x$prop_credible, "% credible set", 
+  #     ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+  #     "\n", sep = "") 
+  # })
 
-  return(invisible())
+  # return(invisible())
   
   cat(" - command:", x$cmd, "\n")
     
@@ -200,7 +199,7 @@ plot_ncausal.FinemaprFinemap <- function(x, locus = 1,
   lim_prob = c(0, 1), # automatic limits
   ...)
 {
-  ptab <- x$ncausal[[locus]]
+  ptab <- x$ncausal
   
   sum_prop_zero <- filter(ptab, ncausal_num == 0)[["prob"]]  %>% sum
   if(sum_prop_zero == 0) {
@@ -229,7 +228,7 @@ plot_config.FinemaprFinemap <- function(x, locus = 1,
   top_rank = getOption("top_rank"),  
   ...)
 {
-  ptab <- x$config[[locus]]
+  ptab <- x$config
 
   ptab <- head(ptab, top_rank)
 
@@ -255,7 +254,7 @@ plot_snp.FinemaprFinemap <- function(x, locus = 1,
   top_rank = getOption("top_rank"),  
   ...)
 {
-  ptab <- x$snp[[locus]]
+  ptab <- x$snp
 
   ptab <- head(ptab, top_rank)
 

@@ -54,7 +54,7 @@ read_ld <- function(file_ld, snps)
   stopifnot(requireNamespace("data.table"))
 
   ### read
-  mat <- data.table::fread(file_ld) %>% as.matrix
+  mat <- read.table(file_ld, row.names=1, header=T) %>% as.matrix
   
   stopifnot(ncol(mat) == nrow(mat))
   
