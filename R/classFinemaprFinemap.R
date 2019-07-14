@@ -88,24 +88,28 @@ collect_results.FinemaprFinemap <- function(x, ...)
 {
   results <- try({
     lapply(seq(1, x$num_loci), function(locus) {
-      log <- x$log #read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      log <- read_lines(file.path(x$dir_run, sub("[0-9]*\\.", "", filename_log(x, locus))))
       
-      snp <- x$snp#file.path(x$dir_run, filename_snp(x, locus)) %>%
-          #read_delim(, delim = " ", col_types = cols())
+      snp <- file.path(x$dir_run, sub("[0-9]*\\.", "", filename_snp(x, locus))) %>%
+          read_delim(, delim = " ", col_types = cols())
+      snp <- snp[locus,]
       
       snp <- arrange(data.table(snp), as.numeric(-snp_prob)) %>%
         mutate(
           rank_pp = seq(1, n()),
           snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
-        select(rank_pp, snp$snp, snp_prob, snp_log10bf) #snp_prob_cumsum, snp_log10bf)
+        select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf) #, snp_log10bf)
       
-      snp <- merge_tab_snp(x$tab[[1]][locus], snp)
+
+      snp <- merge(data.table(x$tab[which(x$tab[[1]]==snp$snp),]), snp)
+
+      config_list <- file.path(x$dir_run, sub("[0-9]*\\.", "", filename_config(x, locus))) %>%
+          read_delim(, delim = " ", col_types = cols())
       
       list(
         log = log,
         snp = snp,
-        config = file.path(x$dir_run, filename_config(x, locus)) %>%
-          read_delim(, delim = " ", col_types = cols()),
+        config = config_list[locus,],
         ncausal = finemap_extract_ncausal(log))
     })
   })
