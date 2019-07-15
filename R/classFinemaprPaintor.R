@@ -146,7 +146,7 @@ collect_results.FinemaprPaintor <- function(x, ...)
 {
   results <- try({
     lapply(seq(1, x$num_loci), function(locus) {
-      #log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
       
       snp <- file.path(x$dir_run, filename_snp(x, locus)) %>%
           read_delim(, delim = " ", col_types = cols())
@@ -170,7 +170,7 @@ collect_results.FinemaprPaintor <- function(x, ...)
   ### check status and return
   x$status <- ifelse(class(results)[1] == "try-error", 1, 0)
   if(x$status == 0) {
-    #x$log <- lapply(results, function(x) x$log)
+    x$log <- lapply(results, function(x) x$log)
     x$snp <- lapply(results, function(x) x$snp)
     
     x$snps_credible <- extract_credible_set(x)
