@@ -138,20 +138,20 @@ print.FinemaprFinemap <- function(x, ...)
 {
   cat(" - tables of results: `config`, `snp`, `ncausal`\n")
   
-  # ret <- lapply(seq(1, x$num_loci), function(i) {    
-  #   cat(" - locus:",i, "\n")
-  #   cat("  -- config:\n")
-  #   cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
-  #     " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
-  #     " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
-  #   print(x$config, n = 3)
-  #   cat("  -- snp:\n")
-  #   print(x$snp[[2]][i])
-  #   cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
-  #     100*x$prop_credible, "% credible set", 
-  #     ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
-  #     "\n", sep = "") 
-  # })
+  ret <- lapply(seq(1, x$num_loci), function(i) {    
+    cat(" - locus:",i, "\n")
+    cat("  -- config:\n")
+    cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
+      " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
+      " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
+    print(x$config, n = 3)
+    cat("  -- snp:\n")
+    print(x$snp[[2]][i])
+    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+      100*x$prop_credible, "% credible set", 
+      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+      "\n", sep = "") 
+  })
 
   # return(invisible())
   
