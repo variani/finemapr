@@ -9,20 +9,34 @@
 #' @export
 print.FinemaprPaintor <- function(x, ...)
 {
-  cat(" - cmd:", x$cmd, "\n")
-  cat(" - #loci:", x$num_loci, "\n") 
-  cat(" - annotations:", paste(x$annotations, collapse = ", "), "\n")
-  cat(" - logBF (proportional to the model likelihood):", x$logBF, "\n")
+  # cat(" - cmd:", x$cmd, "\n")
+  # cat(" - #loci:", x$num_loci, "\n") 
+  # cat(" - annotations:", paste(x$annotations, collapse = ", "), "\n")
+  # cat(" - logBF (proportional to the model likelihood):", x$logBF, "\n")
   
-  ret <- lapply(seq(1, x$num_loci), function(i) {    
-    cat(" - locus:",i, "\n")
-    cat("  -- snp:\n")
-    print(x$snp[[2]][i])
-    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
-      100*x$prop_credible, "% credible set", 
-      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
-      "\n", sep = "") 
-  })
+  # ret <- lapply(seq(1, x$num_loci), function(i) {    
+  #   cat(" - locus:",i, "\n")
+  #   cat("  -- snp:\n")
+  #   print(x$snp[[2]][i])
+  #   cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+  #     100*x$prop_credible, "% credible set", 
+  #     ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+  #     "\n", sep = "") 
+  # })
+
+  cat(" - command:", x$cmd, "\n")
+    
+  if(x$status) {
+    cat(" - see log output in `log`\n")
+    cat(" - tables of results: `snp`\n")
+    
+    cat(" - snp:\n")
+    print(x$snp, n = 3)
+
+
+    cat(" - annotations:", x$annotations, "\n")
+    cat(" - logBF (proportional to model likelihood): ", x$logBF, "\n")
+  }
 }
 
 #---------------------

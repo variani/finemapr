@@ -138,20 +138,20 @@ print.FinemaprFinemap <- function(x, ...)
 {
   cat(" - tables of results: `config`, `snp`, `ncausal`\n")
   
-  ret <- lapply(seq(1, x$num_loci), function(i) {    
-    cat(" - locus:",i, "\n")
-    cat("  -- config:\n")
-    cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
-      " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
-      " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
-    print(x$config, n = 3)
-    cat("  -- snp:\n")
-    print(x$snp[[2]][i])
-    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
-      100*x$prop_credible, "% credible set", 
-      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
-      "\n", sep = "") 
-  })
+  # ret <- lapply(seq(1, x$num_loci), function(i) {    
+  #   cat(" - locus:",i, "\n")
+  #   cat("  -- config:\n")
+  #   cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
+  #     " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
+  #     " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
+  #   print(x$config, n = 3)
+  #   cat("  -- snp:\n")
+  #   print(x$snp[[2]][i])
+  #   cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+  #     100*x$prop_credible, "% credible set", 
+  #     ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+  #     "\n", sep = "") 
+  # })
 
   # return(invisible())
   
@@ -249,6 +249,35 @@ plot_config.FinemaprFinemap <- function(x, locus = 1,
     xlim(lim_prob) + 
     scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
 }
+
+#' @rdname FinemaprFinemap
+#' @export
+plot_config_nsnps.FinemaprFinemap <- function(x, nsnps = -1,
+  locus = 1,
+  lim_prob = c(0, 1.5), 
+  label_size = getOption("finemapr_label_size"),  
+  #top_rank = getOption("top_rank"),  
+  ...)
+{
+  ptab <- x$config
+  if(nsnps >= 0) ptab <- x$config %>% filter(num_elem == nsnps)
+
+  #ptab <- head(ptab, top_rank)
+
+  ptab <- mutate(ptab,
+    label = paste0(config, "\n", 
+      "P = ", round(config_prob, 2),
+      "; ", "log10(BF) = ", round(config_log10bf, 2)))
+
+  ggplot(ptab, aes(config_prob, rank)) + 
+    geom_vline(xintercept = 1, linetype = 3) + 
+    geom_point() + 
+    geom_segment(aes(xend = config_prob, yend = rank, x = 0)) #+ 
+    #geom_text(aes(label = label), hjust = 0, nudge_x = 0.025, size = label_size) + 
+    #xlim(lim_prob) + 
+    #scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
+}
+
 
 #' @rdname FinemaprFinemap
 #' @export
