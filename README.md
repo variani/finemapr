@@ -1,5 +1,8 @@
 # finemapr
 
+[![travis-ci build status](https://travis-ci.org/variani/finemapr.svg?branch=master)](https://travis-ci.org/finemapr/lme4qtl)
+
+
 ![](misc/figures/finemap-2causal.png)
 
 R interface to fine-mappers:
