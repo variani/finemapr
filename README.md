@@ -1,6 +1,6 @@
 # finemapr
 
-[![travis-ci build status](https://travis-ci.org/variani/finemapr.svg?branch=master)](https://travis-ci.org/finemapr/lme4qtl)
+[![travis-ci build status](https://travis-ci.org/variani/finemapr.svg?branch=master)](https://travis-ci.org/variani/finemapr/)
 
 
 ![](misc/figures/finemap-2causal.png)
