@@ -1,3 +1,21 @@
+## FINEMAP
+
+finemap="finemap_v1.1_x86_64"
+appdir="$HOME/.local/apps/finemap/"
+
+mkdir install_finemap
+cd install_finemap
+
+# make a binary file 
+wget http://www.christianbenner.com/${finemap}.tgz
+tar -xvzf ${finemap}.tgz 
+cd ${finemap}/
+
+# install in a local directory
+mkdir -p ${appdir}
+cp ${finemap} ${appdir}/finemap
+cp -r example ${appdir}/
+
 ## CAVIAR
 
 - https://github.com/fhormoz/caviar

@@ -14,6 +14,24 @@ By using `finemapr`, your input files are automatically prepared for each tool, 
 
 **Note**: the package is still under development and its current version is not stable. The current work aims at switching from `run_<tool>` functions to a more general one, [finemapr](https://github.com/variani/finemapr/blob/master/R/finemapr.R). The later function makes use of S3 method dispatch features. Thus, use this package with caution until the stable release comes out.
 
+## Quick start
+
+```r
+library(finemapr)
+library(tidyverse)
+
+# get some example data
+finemapr::example_finemap() %>% attach
+
+# run finemapping, default tool is finemap
+out <- finemapr(z1, ld1, n1, args = "--n-causal-max 3")
+
+# print & plot results
+out
+
+plot(out, grid_nrow = 1)
+```
+
 ## Tool-independent analysis workflow
 
 ```r
@@ -36,6 +54,7 @@ plot(out)
 # export results
 write.table(out$snp, "<my_results.tab>")
 ```
+
 ## Examples
 
 See the vignette [Fine-mapping analysis pipeline by `finemapr`](https://variani.github.io/finemapr/vignettes/finemapr.html).
