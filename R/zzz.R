@@ -9,8 +9,9 @@ finemapr_guess_tool <- function(tool = c("finemap", "caviar", "paintor", "cojo")
     "cojo" = "gcta",
     stop())
   
-  path_apps <- file.path("~/apps/", tool)
+  path_apps <- file.path("~/.local/apps/", tool)
   file_apps <- file.path(path_apps, tool_bin)
+
   if(file.exists(file_apps)) {
     return(file_apps)
   }

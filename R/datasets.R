@@ -3,7 +3,7 @@
 #---------------------------
 
 #' @export
-example_finemap <- function(dir_example = "~/apps/finemap/example/")
+example_finemap <- function(dir_example = "~/.local/apps/finemap/example/")
 {
   ### read
   master <- read_delim(file.path(dir_example, "data"), 
