@@ -4,8 +4,14 @@
 \alias{run_finemap}
 \title{Run FINEMAP.}
 \usage{
-run_finemap(tab, ld, n, dir_run = "run_finemap",
-  tool = getOption("finemapr_finemap"), args = "")
+run_finemap(
+  tab,
+  ld,
+  n,
+  dir_run = "run_finemap",
+  tool = getOption("finemapr_finemap"),
+  args = ""
+)
 }
 \description{
 Run FINEMAP.

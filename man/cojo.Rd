@@ -4,8 +4,16 @@
 \alias{cojo}
 \title{Run GCTA-COJO.}
 \usage{
-cojo(tab, bed, method = c("select"), p = 5e-08, dir_run = "run_cojo",
-  tool = getOption("finemapr_cojo"), args = "")
+cojo(
+  tab,
+  bed,
+  method = c("select", "cond"),
+  cmd = "",
+  snps_cond = NULL,
+  dir_run = "run_cojo",
+  tool = getOption("finemapr_cojo"),
+  args = ""
+)
 }
 \description{
 http://gcta.freeforums.net/thread/178/conditional-joint-analysis-using-summary

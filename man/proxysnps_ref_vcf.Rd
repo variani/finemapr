@@ -4,8 +4,14 @@
 \alias{proxysnps_ref_vcf}
 \title{https://github.com/slowkow/proxysnps/blob/master/R/get_vcf.R}
 \usage{
-proxysnps_ref_vcf(chr = 16, start = 53767000, end = 53768000,
-  pop = "EUR", snps = NULL, verbose = 0)
+proxysnps_ref_vcf(
+  chr = 16,
+  start = 53767000,
+  end = 53768000,
+  pop = "EUR",
+  snps = NULL,
+  verbose = 0
+)
 }
 \description{
 https://github.com/slowkow/proxysnps/blob/master/R/get_vcf.R

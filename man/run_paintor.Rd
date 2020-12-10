@@ -4,8 +4,16 @@
 \alias{run_paintor}
 \title{Run Paintor.}
 \usage{
-run_paintor(tab, ld, n, annot, annotations, dir_run = "run_paintor",
-  tool = getOption("finemapr_paintor"), args = "")
+run_paintor(
+  tab,
+  ld,
+  n,
+  annot,
+  annotations,
+  dir_run = "run_paintor",
+  tool = getOption("finemapr_paintor"),
+  args = ""
+)
 }
 \description{
 Run Paintor.

@@ -11,9 +11,13 @@ print.FinemaprCaviar(x, ...)
 
 \method{plot}{FinemaprCaviar}(x, ...)
 
-\method{plot_snp}{FinemaprCaviar}(x, lim_prob = c(0, 1.5),
+\method{plot_snp}{FinemaprCaviar}(
+  x,
+  lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
-  top_rank = getOption("top_rank"), ...)
+  top_rank = getOption("top_rank"),
+  ...
+)
 }
 \description{
 S3 class FinemaprCaviar.

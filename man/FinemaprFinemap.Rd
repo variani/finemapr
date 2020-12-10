@@ -41,24 +41,42 @@
 
 print.FinemaprFinemap(x, ...)
 
-\method{plot}{FinemaprFinemap}(x, grid_nrow = NULL, grid_ncol = NULL,
+\method{plot}{FinemaprFinemap}(
+  x,
+  grid_nrow = NULL,
+  grid_ncol = NULL,
   label_size = getOption("finemapr_label_size"),
-  label_size_config = label_size, label_size_snp = label_size,
-  top_rank = getOption("top_rank"), top_rank_config = top_rank,
-  top_rank_snp = top_rank, lim_prob = getOption("lim_prob"),
-  lim_prob_config = lim_prob, lim_prob_snp = lim_prob,
-  lim_prob_ncausal = lim_prob, ...)
+  label_size_config = label_size,
+  label_size_snp = label_size,
+  top_rank = getOption("top_rank"),
+  top_rank_config = top_rank,
+  top_rank_snp = top_rank,
+  lim_prob = getOption("lim_prob"),
+  lim_prob_config = lim_prob,
+  lim_prob_snp = lim_prob,
+  lim_prob_ncausal = lim_prob,
+  ...
+)
 
-\method{plot_ncausal}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1),
-  ...)
+\method{plot_ncausal}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1), ...)
 
-\method{plot_config}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1.5),
+\method{plot_config}{FinemaprFinemap}(
+  x,
+  locus = 1,
+  lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
-  top_rank = getOption("top_rank"), ...)
+  top_rank = getOption("top_rank"),
+  ...
+)
 
-\method{plot_snp}{FinemaprFinemap}(x, locus = 1, lim_prob = c(0, 1.5),
+\method{plot_snp}{FinemaprFinemap}(
+  x,
+  locus = 1,
+  lim_prob = c(0, 1.5),
   label_size = getOption("finemapr_label_size"),
-  top_rank = getOption("top_rank"), ...)
+  top_rank = getOption("top_rank"),
+  ...
+)
 }
 \description{
 S3 class FinemaprFinemap.

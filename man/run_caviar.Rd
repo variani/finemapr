@@ -4,8 +4,13 @@
 \alias{run_caviar}
 \title{Run CAVIAR.}
 \usage{
-run_caviar(tab, ld, dir_run = "run_caviar",
-  tool = getOption("finemapr_caviar"), args = "")
+run_caviar(
+  tab,
+  ld,
+  dir_run = "run_caviar",
+  tool = getOption("finemapr_caviar"),
+  args = ""
+)
 }
 \description{
 Output file (`*_post`): 

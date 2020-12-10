@@ -3,7 +3,6 @@
 \docType{package}
 \name{finemaprPackage}
 \alias{finemaprPackage}
-\alias{finemaprPackage-package}
 \title{Package finemapr.}
 \description{
 R wrapper to fine-mappers.
