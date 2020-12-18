@@ -18,9 +18,9 @@ write_files.FinemaprFinemap <- function(x, ...)
   #stopifnot(ret_dir_create)
 
   ### write file of Z-scores
-  ret <- lapply(seq_along(x$tab), function(locus) {
+  ret <- lapply(seq_along(x$tab)[[1]], function(locus) {
     write_delim(
-      prepare_zscore_writing(x$tab[[locus]]),
+      prepare_zscore_writing(x$tab[[2]]), # zscore
       file.path(x$dir_run, filename_zscore(x, locus)), 
       delim = " ", col_names = FALSE)
   })
@@ -88,24 +88,28 @@ collect_results.FinemaprFinemap <- function(x, ...)
 {
   results <- try({
     lapply(seq(1, x$num_loci), function(locus) {
-      log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      log <- read_lines(file.path(x$dir_run, sub("[0-9]*\\.", "", filename_log(x, locus))))
       
-      snp <- file.path(x$dir_run, filename_snp(x, locus)) %>%
+      snp <- file.path(x$dir_run, sub("[0-9]*\\.", "", filename_snp(x, locus))) %>%
           read_delim(, delim = " ", col_types = cols())
+      snp <- snp[locus,]
       
-      snp <- arrange(snp, -snp_prob) %>%
+      snp <- arrange(data.table(snp), as.numeric(-snp_prob)) %>%
         mutate(
           rank_pp = seq(1, n()),
           snp_prob_cumsum = cumsum(snp_prob) / sum(snp_prob)) %>%
-        select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf)
+        select(rank_pp, snp, snp_prob, snp_prob_cumsum, snp_log10bf) #, snp_log10bf)
       
-      snp <- merge_tab_snp(x$tab[[locus]], snp)
+
+      snp <- merge(data.table(x$tab[which(x$tab[[1]]==snp$snp),]), snp)
+
+      config_list <- file.path(x$dir_run, sub("[0-9]*\\.", "", filename_config(x, locus))) %>%
+          read_delim(, delim = " ", col_types = cols())
       
       list(
         log = log,
         snp = snp,
-        config = file.path(x$dir_run, filename_config(x, locus)) %>%
-          read_delim(, delim = " ", col_types = cols()),
+        config = config_list[locus,],
         ncausal = finemap_extract_ncausal(log))
     })
   })
@@ -134,22 +138,22 @@ print.FinemaprFinemap <- function(x, ...)
 {
   cat(" - tables of results: `config`, `snp`, `ncausal`\n")
   
-  ret <- lapply(seq(1, x$num_loci), function(i) {    
-    cat(" - locus:",i, "\n")
-    cat("  -- config:\n")
-    cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
-      " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
-      " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
-    print(x$config[[i]], n = 3)
-    cat("  -- snp:\n")
-    print(x$snp[[i]], n = 3)
-    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
-      100*x$prop_credible, "% credible set", 
-      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
-      "\n", sep = "") 
-  })
+  # ret <- lapply(seq(1, x$num_loci), function(i) {    
+  #   cat(" - locus:",i, "\n")
+  #   cat("  -- config:\n")
+  #   cat("  -- input snps: ", length(x$snps_finemap[[i]]), " fine-mapped",
+  #     " + ", length(x$snps_missing_finemap[[i]]), " missing Z/LD",
+  #     " = ", length(x$snps_zscore[[i]]), " in total\n", sep = "")
+  #   print(x$config, n = 3)
+  #   cat("  -- snp:\n")
+  #   print(x$snp[[2]][i])
+  #   cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+  #     100*x$prop_credible, "% credible set", 
+  #     ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+  #     "\n", sep = "") 
+  # })
 
-  return(invisible())
+  # return(invisible())
   
   cat(" - command:", x$cmd, "\n")
     
@@ -199,7 +203,7 @@ plot_ncausal.FinemaprFinemap <- function(x, locus = 1,
   lim_prob = c(0, 1), # automatic limits
   ...)
 {
-  ptab <- x$ncausal[[locus]]
+  ptab <- x$ncausal
   
   sum_prop_zero <- filter(ptab, ncausal_num == 0)[["prob"]]  %>% sum
   if(sum_prop_zero == 0) {
@@ -228,7 +232,7 @@ plot_config.FinemaprFinemap <- function(x, locus = 1,
   top_rank = getOption("top_rank"),  
   ...)
 {
-  ptab <- x$config[[locus]]
+  ptab <- x$config
 
   ptab <- head(ptab, top_rank)
 
@@ -248,13 +252,42 @@ plot_config.FinemaprFinemap <- function(x, locus = 1,
 
 #' @rdname FinemaprFinemap
 #' @export
+plot_config_nsnps.FinemaprFinemap <- function(x, nsnps = -1,
+  locus = 1,
+  lim_prob = c(0, 1.5), 
+  label_size = getOption("finemapr_label_size"),  
+  #top_rank = getOption("top_rank"),  
+  ...)
+{
+  ptab <- x$config
+  if(nsnps >= 0) ptab <- x$config %>% filter(num_elem == nsnps)
+
+  #ptab <- head(ptab, top_rank)
+
+  ptab <- mutate(ptab,
+    label = paste0(config, "\n", 
+      "P = ", round(config_prob, 2),
+      "; ", "log10(BF) = ", round(config_log10bf, 2)))
+
+  ggplot(ptab, aes(config_prob, rank)) + 
+    geom_vline(xintercept = 1, linetype = 3) + 
+    geom_point() + 
+    geom_segment(aes(xend = config_prob, yend = rank, x = 0)) #+ 
+    #geom_text(aes(label = label), hjust = 0, nudge_x = 0.025, size = label_size) + 
+    #xlim(lim_prob) + 
+    #scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
+}
+
+
+#' @rdname FinemaprFinemap
+#' @export
 plot_snp.FinemaprFinemap <- function(x, locus = 1,
   lim_prob = c(0, 1.5), 
   label_size = getOption("finemapr_label_size"),  
   top_rank = getOption("top_rank"),  
   ...)
 {
-  ptab <- x$snp[[locus]]
+  ptab <- x$snp
 
   ptab <- head(ptab, top_rank)
 

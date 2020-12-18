@@ -9,20 +9,34 @@
 #' @export
 print.FinemaprPaintor <- function(x, ...)
 {
-  cat(" - cmd:", x$cmd, "\n")
-  cat(" - #loci:", x$num_loci, "\n") 
-  cat(" - annotations:", paste(x$annotations, collapse = ", "), "\n")
-  cat(" - logBF (proportional to the model likelihood):", x$logBF, "\n")
+  # cat(" - cmd:", x$cmd, "\n")
+  # cat(" - #loci:", x$num_loci, "\n") 
+  # cat(" - annotations:", paste(x$annotations, collapse = ", "), "\n")
+  # cat(" - logBF (proportional to the model likelihood):", x$logBF, "\n")
   
-  ret <- lapply(seq(1, x$num_loci), function(i) {    
-    cat(" - locus:",i, "\n")
-    cat("  -- snp:\n")
-    print(x$snp[[i]], n = 3)
-    cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
-      100*x$prop_credible, "% credible set", 
-      ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
-      "\n", sep = "") 
-  })
+  # ret <- lapply(seq(1, x$num_loci), function(i) {    
+  #   cat(" - locus:",i, "\n")
+  #   cat("  -- snp:\n")
+  #   print(x$snp[[2]][i])
+  #   cat("  -- ", length(x$snps_credible[[i]]), " snps in ",
+  #     100*x$prop_credible, "% credible set", 
+  #     ": ", paste(x$snps_credible[[i]], collapse = ", "), "...", 
+  #     "\n", sep = "") 
+  # })
+
+  cat(" - command:", x$cmd, "\n")
+    
+  if(x$status) {
+    cat(" - see log output in `log`\n")
+    cat(" - tables of results: `snp`\n")
+    
+    cat(" - snp:\n")
+    print(x$snp, n = 3)
+
+
+    cat(" - annotations:", x$annotations, "\n")
+    cat(" - logBF (proportional to model likelihood): ", x$logBF, "\n")
+  }
 }
 
 #---------------------
@@ -146,12 +160,12 @@ collect_results.FinemaprPaintor <- function(x, ...)
 {
   results <- try({
     lapply(seq(1, x$num_loci), function(locus) {
-      #log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
+      log <- read_lines(file.path(x$dir_run, filename_log(x, locus)))
       
       snp <- file.path(x$dir_run, filename_snp(x, locus)) %>%
           read_delim(, delim = " ", col_types = cols())
-      stopifnot(ncol(snp) == 3)
-      names(snp) <- c("snp", "zscore", "snp_prob")
+      stopifnot(ncol(snp) == 4)
+      names(snp) <- c("rank", "snp", "zscore", "snp_prob")
       
       snp <- select(snp, snp, snp_prob) %>% 
         arrange(-snp_prob) %>%
@@ -170,7 +184,7 @@ collect_results.FinemaprPaintor <- function(x, ...)
   ### check status and return
   x$status <- ifelse(class(results)[1] == "try-error", 1, 0)
   if(x$status == 0) {
-    #x$log <- lapply(results, function(x) x$log)
+    x$log <- lapply(results, function(x) x$log)
     x$snp <- lapply(results, function(x) x$snp)
     
     x$snps_credible <- extract_credible_set(x)

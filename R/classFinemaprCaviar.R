@@ -12,7 +12,7 @@ print.FinemaprCaviar <- function(x, ...)
   cat(" - command:", x$cmd, "\n")
     
   if(x$status) {
-    #cat(" - see log output in `log`\n")
+    cat(" - see log output in `log`\n")
     cat(" - tables of results: `snp`\n")
     
     cat(" - snp:\n")
