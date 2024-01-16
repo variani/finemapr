@@ -13,6 +13,7 @@ Imports:
     readr,
     magrittr,
     ggplot2,
+    ggrepel,
     cowplot,
     data.table,
     Matrix
