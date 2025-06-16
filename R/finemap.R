@@ -12,7 +12,7 @@ run_finemap <- function(tab, ld, n,
   tool = getOption("finemapr_finemap"), args = "")
 {
   ### arg
-  stopifnot(class(ld) == "matrix")
+  stopifnot(is.matrix(ld))
   stopifnot(!is.null(rownames(ld)))
   stopifnot(!is.null(colnames(ld)))
   
